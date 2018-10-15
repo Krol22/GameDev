@@ -1,0 +1,14 @@
+Todo: 
+
+    [ ] -> unit tests for ECS,
+    [ ] -> importing and exporting state from ECS,
+    [ ] -> InputManager
+        [ ] -> unit tests for InputManager,
+    [ ] -> SceneManager
+        [ ] -> unit tests for SceneManager,
+    [ ] -> TextureLoader
+        [ ] -> unit tests for TextureLoader,
+    [ ] -> SoundManager
+        [ ] -> unit tests for SoundManager,
+        
+
