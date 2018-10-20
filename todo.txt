@@ -1,14 +1,68 @@
-Todo: 
+Done:
+    [x] -> ECS basic,
+        [x] -> Entities,
+        [x] -> System management,
+        [x] -> Component types,
+    [x] -> rewrite to TS,
+    [x] -> setup proj and vim,
 
-    [ ] -> unit tests for ECS,
-    [ ] -> importing and exporting state from ECS,
-    [ ] -> InputManager
-        [ ] -> unit tests for InputManager,
+Todo:
+    [ ] -> GraphicManager,
+        [  ] -> Draw basic shapes for debugging, or basics particle effects, 
+        [  ] -> Draw text,
+        [  ] -> Draw texture,
+        [  ] -> Draw texture fragment (sprite),
+        [  ] -> Test site with canvas 
+    [ ] -> AssetsLoader,
+        [  ] -> Asset base class -> Texture class, Sound class,
+        [  ] -> Loading texture to game,
+        [  ] -> Loading sounds to game,
+        [  ] -> Getting access for textures and sounds from other parts of game,
+        [  ] -> Texture/sound metadata,
+        [  ] -> Test AssetsLoader with GraphicManager,
+        [  ] -> Some kind of progress information -> "LOADED/INITIAL", "LOADING {0}" ({0} -> stands for percentage of loaded files),
+    [ ] -> ECS,
+        [  ] -> Pasue/resume functions,
+        [  ] -> Get entity reference by entityId,
+
+    [ ] -> UIManager,
+        [ ] -> create basic UI components like -> Text, Button, Grid, NestingComponents
+        [ ] -> unit tests for UIManager,
     [ ] -> SceneManager
         [ ] -> unit tests for SceneManager,
-    [ ] -> TextureLoader
-        [ ] -> unit tests for TextureLoader,
+    [ ] -> InputManager
+        [ ] -> unit tests for InputManager,
     [ ] -> SoundManager
         [ ] -> unit tests for SoundManager,
-        
+    [ ] -> importing and exporting state from ECS,
 
+
+So the UI manager will have to work seperatly from ECS. I would like to use ECS as separate concept and only communicate with it by events? Dunno exactly how then connect it with input events. I think the ECS should have some kind of getting specific entity outside system so different Managers could do some work on them f.e. 
+
+Input management + UI management + ECS:
+
+- for player controlled entities (example) :
+    0. StateManager is in "Play state",
+    1. User presses "UP_ARROW",
+    2. InputManager recives this and sets correct flag to true,
+    3. ECS gives StateManager reference for player playerControlledComponent,
+    4. StateManager changes playerControlledComponent state from 'stand' to 'go_up',
+    5. Systems recives it and updates playerEntity correctly? 
+
+- for ui components that changes state of ecs components (example) :
+    0. StateManager is in "Play state",
+    1. User presses "I" key (or button on screen),
+    2. ECS "pauses" (or not),
+    3. UI EventListener for this button or letter is launched so Equipment grid is now 'visible',
+    4. User select one item from equipment and removes it from bag,
+    5. UI Manager get entity that has some kind of equipment component and then removes information about item,
+    6. User pressed "Esc" key (or again button on screen),
+    7. ECS "unpause" (or not if in step 2 was not paused)
+
+CONCLUSION -> 
+    - ECS pause/resume state -> it should finish it cycle and then stop untill it's resumed,
+    - ECS need to have some kind of getting entity by ID method (entityId is unique and returned with ECS.addEntity method),
+    - InputManager will need to have separation of either updating game component or ui manager component,
+
+CONCERNS ->
+    - How to separate InputManager + ECS + UIManager, I don't want to make them binded thightly together.
