@@ -10,11 +10,27 @@ export class GraphicsManager {
         this.context.save();
         this.context.translate(x, y);
 
+        // console.log(x, y, color);
         this.context.fillStyle = color;
         this.context.fillRect(0, 0, w, h);
+        this.context.stroke();
 
         this.context.restore();
     }
+
+    drawCircle(x: number, y: number, r: number) {
+        this.context.save();
+        this.context.translate(x, y);
+
+        this.context.beginPath();
+        this.context.arc(0, 0, r, 0, 2 * Math.PI, false);
+        this.context.lineWidth = 2;
+        this.context.strokeStyle = '#003300';
+        this.context.stroke();
+
+        this.context.restore();
+    }
+
 
     drawText(x: number, y: number, text: string, color: string, font: string = '20px Arial') {
         this.context.save();
@@ -41,6 +57,16 @@ export class GraphicsManager {
         this.context.translate(x, y);
 
         this.context.drawImage(image, sx, sy, sw, sh, 0, 0, dw, dh);
+
+        this.context.restore();
+    }
+
+    drawLine(x1: number, y1: number, x2: number, y2: number) {
+        this.context.save();
+        this.context.translate(x1, y1);
+
+        this.context.moveTo(0, 0);
+        this.context.lineTo(x2 - x1, y2 - y1);
 
         this.context.restore();
     }

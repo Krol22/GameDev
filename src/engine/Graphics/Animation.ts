@@ -17,8 +17,7 @@ export class Animation {
         private sprite: Sprite,
         private frameRate: number,
         private from: number,
-        private to: number,
-        private loop: boolean
+        private to: number
     ) {
         this.currentFrame = from;
         this.numberOfFrames = this.to - this.from;
@@ -41,9 +40,6 @@ export class Animation {
         this.currentFrame = Math.floor(this.step / this.frameRate) + 1;
 
         if (this.step >= this.frameRate * this.numberOfFrames) {
-            if (!this.loop) {
-                this.state = ANIMATION_STATES.IDLE;
-            }
             this.step = 0;
             this.currentFrame = this.from;
         }

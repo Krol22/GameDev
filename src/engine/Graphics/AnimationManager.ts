@@ -14,14 +14,13 @@ export class AnimationManager {
         sprite: Sprite,
         frameRate: number,
         from: number,
-        to: number,
-        loop: boolean
+        to: number
     ) {
         if (this.animations[name]) {
             throw new Error(`Animation with name: ${name} already exists.`);
         }
 
-        this.animations[name] = new Animation(name, sprite, frameRate, from, to, loop);
+        this.animations[name] = new Animation(name, sprite, frameRate, from, to);
     }
 
     update() {
