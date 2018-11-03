@@ -65,6 +65,7 @@ export class GraphicsManager {
         this.context.save();
         this.context.translate(x1, y1);
 
+        this.context.beginPath();
         this.context.moveTo(0, 0);
         this.context.lineTo(x2 - x1, y2 - y1);
 
