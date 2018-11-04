@@ -18,10 +18,12 @@ Todo:
         [x] -> Static animations,
         [x] -> Skeleton,
         [x] -> Skeletal animations poc,
-        [] -> Skeletal animations,
+        [x] -> Skeletal animations,
             [x] -> Multiple childJoins from one join,
             [x] -> Multiple animation at once (in one skeleton),
-            [] -> Easing functions,
+            [! removed] -> Easing functions, 
+        [x] -> multiple animations states (run -> on right arrow, hit -> on space)
+        [ ] -> Connect skeletal animations with static animations (add texture)
 
     [ ] -> AssetsLoader,
         [  ] -> Asset base class -> Texture class, Sound class,

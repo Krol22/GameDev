@@ -26,7 +26,9 @@ export class SkeletalStep {
     }
 
     update () {
-        this.state = ANIMATION_STATES.PLAYING;
+        if (this.state === ANIMATION_STATES.DONE) {
+            return;
+        }
 
         if (this.step >= 0 && this.currentAngle > this.toAngle) {
             this.state = ANIMATION_STATES.DONE;
@@ -41,7 +43,12 @@ export class SkeletalStep {
     }
 
     restart () {
+        this.state = ANIMATION_STATES.IDLE;
         this.currentAngle = this.fromAngle;
+    }
+
+    play () {
+        this.state = ANIMATION_STATES.PLAYING;
     }
 }
 
@@ -57,8 +64,17 @@ export class SkeletalAnimation {
         this.numberOfSteps = steps.length;
     }
 
+    play () {
+        this.state = ANIMATION_STATES.PLAYING;
+        this.steps.forEach((steps: SkeletalStep[]) => {
+            steps.forEach((step: SkeletalStep) => {
+                step.play()
+            });
+        });
+    }
+
     update () {
-        if (this.state === ANIMATION_STATES.DONE) {
+        if (this.state !== ANIMATION_STATES.PLAYING) {
             return;
         }
 
@@ -76,14 +92,13 @@ export class SkeletalAnimation {
         }
 
         if (this.stepsIndex === this.numberOfSteps) {
-            if (this.loop) {
-                this.stepsIndex = 0;
-                this.steps.forEach((skeletalSteps: SkeletalStep[]) => {
-                    skeletalSteps.forEach((skeletalStep: SkeletalStep) => {
-                        skeletalStep.restart();
-                    });
+            this.state = ANIMATION_STATES.DONE;
+            this.stepsIndex = 0;
+            this.steps.forEach((skeletalSteps) => {
+                skeletalSteps.forEach((skeletalStep) => {
+                    skeletalStep.restart();
                 });
-            }
+            });
         }
     }
 }

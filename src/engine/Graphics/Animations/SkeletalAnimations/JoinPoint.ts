@@ -114,7 +114,7 @@ export class JoinPoint {
         this.position.y = aroundPoint.y + r * Math.sin(angle);
 
         if (Number.isNaN(this.position.x)) {
-            debugger;
+            // debugger;
         }
 
         this.childJoinPoints.forEach((childJoinPoint: JoinPoint) => {
