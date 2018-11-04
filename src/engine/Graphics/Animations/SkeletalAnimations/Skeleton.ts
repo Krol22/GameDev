@@ -1,6 +1,6 @@
 import { Vector2d } from '../../../Math';
 import { GraphicsManager } from '../../GraphicsManager';
-import { Bone } from './';
+import { Bone, JoinPoint } from './';
 
 export class Skeleton {
     constructor (

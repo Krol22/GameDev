@@ -5,14 +5,24 @@ Done:
         [x] -> Component types,
     [x] -> rewrite to TS,
     [x] -> setup proj and vim,
+    [x] -> GraphicManager,
+        [x] -> Draw basic shapes for debugging, or basics particle effects, 
+        [x] -> Draw text,
+        [x] -> Draw texture,
+        [x] -> Draw texture fragment (sprite),
+        [x] -> Test site with canvas 
 
 Todo:
-    [ ] -> GraphicManager,
-        [  ] -> Draw basic shapes for debugging, or basics particle effects, 
-        [  ] -> Draw text,
-        [  ] -> Draw texture,
-        [  ] -> Draw texture fragment (sprite),
-        [  ] -> Test site with canvas 
+    [x] -> Animations Manager,
+        [x] -> Static animations poc,
+        [x] -> Static animations,
+        [x] -> Skeleton,
+        [x] -> Skeletal animations poc,
+        [] -> Skeletal animations,
+            [x] -> Multiple childJoins from one join,
+            [x] -> Multiple animation at once (in one skeleton),
+            [] -> Easing functions,
+
     [ ] -> AssetsLoader,
         [  ] -> Asset base class -> Texture class, Sound class,
         [  ] -> Loading texture to game,

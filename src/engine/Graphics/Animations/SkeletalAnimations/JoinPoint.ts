@@ -8,7 +8,7 @@ export class JoinPoint {
 
     private oldPosition: Vector2d;
 
-    public childJoinPoint?: JoinPoint;
+    public childJoinPoints?: JoinPoint[];
     public parentJoinPoint?: JoinPoint;
 
     private width = 10;
@@ -16,6 +16,7 @@ export class JoinPoint {
     constructor (
         public position: Vector2d,
     ) {
+        this.childJoinPoints = [];
     }
 
     draw (graphicsManager: GraphicsManager) {
@@ -87,20 +88,20 @@ export class JoinPoint {
                 return;
             }
 
-            if (this.childJoinPoint) {
+            this.childJoinPoints.forEach((childJoinPoint: JoinPoint) => {
                 let oxVector = new Vector2d(this.parentJoinPoint.position.x + 500, this.parentJoinPoint.position.y);
 
                 let alphaPrime = Vector2d.findAngle(this.position, this.parentJoinPoint.position, oxVector);
                 let alpha = Vector2d.findAngle(this.oldPosition, this.parentJoinPoint.position, oxVector);
-                let beta = Vector2d.findAngle(this.childJoinPoint.position, this.parentJoinPoint.position, oxVector);
+                let beta = Vector2d.findAngle(childJoinPoint.position, this.parentJoinPoint.position, oxVector);
 
                 let gamma = alpha - beta;
                 let betaPrime = alphaPrime - gamma;
 
                 betaPrime = -betaPrime;
 
-                this.childJoinPoint.rotate(betaPrime, this.parentJoinPoint.position);
-            }
+                childJoinPoint.rotate(betaPrime, this.parentJoinPoint.position);
+            });
         }
     }
 
@@ -112,18 +113,26 @@ export class JoinPoint {
         this.position.x = aroundPoint.x + r * Math.cos(angle);
         this.position.y = aroundPoint.y + r * Math.sin(angle);
 
-        if (this.childJoinPoint) {
+        if (Number.isNaN(this.position.x)) {
+            debugger;
+        }
+
+        this.childJoinPoints.forEach((childJoinPoint: JoinPoint) => {
             let oxVector = new Vector2d(aroundPoint.x + 500, aroundPoint.y);
 
             let alphaPrime = Vector2d.findAngle(this.position, aroundPoint, oxVector);
             let alpha = Vector2d.findAngle(this.oldPosition, aroundPoint, oxVector);
-            let beta = Vector2d.findAngle(this.childJoinPoint.position, aroundPoint, oxVector);
+            let beta = Vector2d.findAngle(childJoinPoint.position, aroundPoint, oxVector);
 
             let gamma = alpha - beta;
             let betaPrime = alphaPrime - gamma;
 
             betaPrime = -betaPrime;
-            this.childJoinPoint.rotate(betaPrime, aroundPoint);
-        }
+            childJoinPoint.rotate(betaPrime, aroundPoint);
+        })
+    }
+
+    addChildJoinPoint(newJoinPoint: any) {
+        this.childJoinPoints.push(newJoinPoint);
     }
 }

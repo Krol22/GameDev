@@ -1,6 +1,6 @@
 import { Animation } from './Animation';
-import { GraphicsManager } from './GraphicsManager';
-import { Sprite } from './Sprite';
+import { GraphicsManager } from '../GraphicsManager';
+import { Sprite } from '../Sprite';
 
 export class AnimationManager {
     private animations: Object = {};

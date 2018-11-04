@@ -1,7 +1,7 @@
 import { GraphicsManager } from './engine/Graphics/GraphicsManager';
-import { Animation } from './engine/Graphics/Animation';
+import { Animation } from './engine/Graphics/Animations/Animation';
 import { Sprite } from './engine/Graphics/Sprite';
-import { AnimationManager } from './engine/Graphics/AnimationManager';
+import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
 
 let graphicsManager: GraphicsManager;
 let animationManager: AnimationManager;

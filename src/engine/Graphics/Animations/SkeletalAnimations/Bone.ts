@@ -6,25 +6,31 @@ export class Bone {
         public parentJoinPoint: JoinPoint,
         public childJoinPoint: JoinPoint
     ) {
-        parentJoinPoint.childJoinPoint = childJoinPoint;
+        parentJoinPoint.addChildJoinPoint(childJoinPoint);
         childJoinPoint.parentJoinPoint = parentJoinPoint;
     }
 
     draw(graphicsManager: GraphicsManager) {
         this.parentJoinPoint.draw(graphicsManager);
 
-        if (this.childJoinPoint) {
-            this.childJoinPoint.draw(graphicsManager);
-        }
+        this.childJoinPoint.draw(graphicsManager);
 
-        graphicsManager.drawLine(this.parentJoinPoint.position.x, this.parentJoinPoint.position.y, this.childJoinPoint.position.x, this.childJoinPoint.position.y);
+        graphicsManager.drawLine(
+            this.parentJoinPoint.position.x,
+            this.parentJoinPoint.position.y,
+            this.childJoinPoint.position.x,
+            this.childJoinPoint.position.y
+        );
+    }
+
+    setAngle(angle: number) {
+        angle = -angle * Math.PI / 180;
+        this.childJoinPoint.rotate(angle, this.parentJoinPoint.position);
     }
 
     update() {
         this.parentJoinPoint.update();
-        if (this.childJoinPoint) {
-            this.childJoinPoint.update();
-        }
+        this.childJoinPoint.update();
     }
 
 }

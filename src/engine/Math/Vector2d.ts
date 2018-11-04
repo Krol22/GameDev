@@ -37,6 +37,12 @@ export class Vector2d {
 
         let angle = Math.acos((a + b - c) / Math.sqrt(4 * a * b));
 
+        if ((a + b - c) / Math.sqrt(4 * a * b) < -1) {
+            return Math.PI;
+        } else if ((a + b - c) / Math.sqrt(4 * a * b) > 1) {
+            return 0;
+        }
+
         if (p0.y > p1.y) {
             angle = 2 * Math.PI - angle;
         }
