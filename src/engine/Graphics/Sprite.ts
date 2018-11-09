@@ -14,7 +14,7 @@ export class Sprite {
         let dx: number;
         let dy: number;
 
-        dx = (Math.floor(frame % this.framesX) - 1) * this.frameWidth;
+        dx = (Math.floor(frame % this.framesX)) * this.frameWidth;
         dy = (Math.floor(frame / this.framesX)) * this.frameHeight;
 
         let dw: number = this.frameWidth;

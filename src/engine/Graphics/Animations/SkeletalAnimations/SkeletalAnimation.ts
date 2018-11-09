@@ -1,17 +1,8 @@
 import { Bone } from './';
+import { AbstractAnimation, ANIMATION_STATES } from '../Animation';
 
-export enum ANIMATION_STATES {
-    INITIAL,
-    PLAYING,
-    IDLE,
-    DONE
-};
-
-export class SkeletalStep {
-    public state: ANIMATION_STATES = ANIMATION_STATES.INITIAL;
-
+export class SkeletalStep extends AbstractAnimation {
     private currentAngle: number;
-    private step: number;
     private sign: number;
 
     constructor(
@@ -20,21 +11,21 @@ export class SkeletalStep {
         private toAngle: number,
         private frameRate: number
     ) {
+        super();
         this.currentAngle = fromAngle;
-
         this.step = (toAngle - fromAngle) / frameRate;
     }
 
     update () {
-        if (this.state === ANIMATION_STATES.DONE) {
+        if (this.state === ANIMATION_STATES.IDLE) {
             return;
         }
 
         if (this.step >= 0 && this.currentAngle > this.toAngle) {
-            this.state = ANIMATION_STATES.DONE;
+            this.state = ANIMATION_STATES.IDLE;
             return;
         } else if (this.step < 0 && this.currentAngle < this.toAngle) {
-            this.state = ANIMATION_STATES.DONE;
+            this.state = ANIMATION_STATES.IDLE;
             return;
         }
 
@@ -46,10 +37,6 @@ export class SkeletalStep {
         this.state = ANIMATION_STATES.IDLE;
         this.currentAngle = this.fromAngle;
     }
-
-    play () {
-        this.state = ANIMATION_STATES.PLAYING;
-    }
 }
 
 export class SkeletalAnimation {
@@ -59,13 +46,14 @@ export class SkeletalAnimation {
     private loop: boolean = true;
 
     constructor(
-        private steps: SkeletalStep[][],
+        private steps: AbstractAnimation[][],
     ) {
         this.numberOfSteps = steps.length;
     }
 
     play () {
         this.state = ANIMATION_STATES.PLAYING;
+
         this.steps.forEach((steps: SkeletalStep[]) => {
             steps.forEach((step: SkeletalStep) => {
                 step.play()
@@ -84,7 +72,7 @@ export class SkeletalAnimation {
         });
 
         let stepDone = skeletalSteps.every((skeletalStep: SkeletalStep) => {
-            return skeletalStep.state === ANIMATION_STATES.DONE;
+            return skeletalStep.state === ANIMATION_STATES.IDLE;
         });
 
         if (stepDone) {
@@ -92,7 +80,7 @@ export class SkeletalAnimation {
         }
 
         if (this.stepsIndex === this.numberOfSteps) {
-            this.state = ANIMATION_STATES.DONE;
+            this.state = ANIMATION_STATES.IDLE;
             this.stepsIndex = 0;
             this.steps.forEach((skeletalSteps) => {
                 skeletalSteps.forEach((skeletalStep) => {

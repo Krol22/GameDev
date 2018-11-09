@@ -25,6 +25,9 @@ Todo:
         [x] -> multiple animations states (run -> on right arrow, hit -> on space)
         [ ] -> Connect skeletal animations with static animations (add texture)
 
+    [ ] -> Debugging tools,
+        [] -> Debug drawing tools,
+
     [ ] -> AssetsLoader,
         [  ] -> Asset base class -> Texture class, Sound class,
         [  ] -> Loading texture to game,

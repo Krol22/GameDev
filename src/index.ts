@@ -8,10 +8,16 @@ import {
     Skeleton,
     JoinPoint,
     SkeletalStep,
-    SkeletalAnimation
+    SkeletalAnimation,
+    BoneTexture
 } from './engine/Graphics/Animations/SkeletalAnimations';
 
+import { Sprite } from './engine/Graphics/Sprite';
+import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
+import { Animation } from './engine/Graphics/Animations/Animation';
+
 let graphicsManager: GraphicsManager;
+let animationManager: AnimationManager;
 let skeleton: Skeleton;
 let bones: Bone[];
 
@@ -21,70 +27,92 @@ let animation: SkeletalAnimation;
 let attackAnimation: SkeletalAnimation;
 let walkAnimation: SkeletalAnimation;
 
+/*
+    Bone should have texture!
+*/
+
+let images: any = {};
+
+function preload() {
+    return new Promise((resolve, reject) => {
+        let loaded = 0;
+
+        images.head = new Image();
+        images.head.src = './assets/NPC_Head_10.png';
+
+        images.body = new Image();
+        images.body.src = './assets/Armor_Body_1.png';
+
+        images.legs = new Image();
+        images.legs.src = './assets/Armor_Legs_1.png';
+
+        images.head.onload = () => {
+            loaded++;
+            if (loaded === Object.keys(images).length) {
+                resolve();
+            }
+        }
+
+        images.body.onload = () => {
+            loaded++;
+            if (loaded === Object.keys(images).length) {
+                resolve();
+            }
+        }
+
+        images.legs.onload = () => {
+            loaded++;
+            if (loaded === Object.keys(images).length) {
+                resolve();
+            }
+        }
+    });
+}
+
 function init() {
-    /*
-        let joinPoint1 = new JoinPoint(new Vector2d(270, 360));
-        let joinPoint2 = new JoinPoint(new Vector2d(220, 190));
-        let joinPoint3 = new JoinPoint(new Vector2d(240, 90));
-        let joinPoint4 = new JoinPoint(new Vector2d(255, 65));
-        let joinPoint5 = new JoinPoint(new Vector2d(230, 70));
-        let joinPoint6 = new JoinPoint(new Vector2d(267, 85));
-
-        bones = [
-            new Bone(joinPoint1, joinPoint2),
-            new Bone(joinPoint2, joinPoint3),
-            new Bone(joinPoint3, joinPoint4),
-            new Bone(joinPoint3, joinPoint5),
-            new Bone(joinPoint3, joinPoint6)
-        ];
-
-        animationSteps = [
-            [
-                new SkeletalStep(bones[1], 70, 140, 40),
-                new SkeletalStep(bones[0], 40, 60, 40)
-            ],
-            [
-                new SkeletalStep(bones[1], 140, 70, 40),
-                new SkeletalStep(bones[0], 60, 40, 40)
-            ]
-        ];
-
-        animation = new SkeletalAnimation(animationSteps);
-        skeleton = new Skeleton(bones, new Vector2d(250, 275));
-    */
+    let headSprite = new Sprite(images.head, 34, 42, 1);
+    let bodySprite = new Sprite(images.body, 40, 56, 1);
+    let legsSprite = new Sprite(images.legs, 40, 56, 1);
 
     let joinPoint1 = new JoinPoint(new Vector2d(200, 200));
-    let joinPoint2 = new JoinPoint(new Vector2d(200, 240));
-    let joinPoint3 = new JoinPoint(new Vector2d(180, 280));
-    let joinPoint5 = new JoinPoint(new Vector2d(220, 280));
-    let joinPoint7 = new JoinPoint(new Vector2d(160, 220));
+    let joinPoint2 = new JoinPoint(new Vector2d(200, 215));
+    let joinPoint3 = new JoinPoint(new Vector2d(200, 230));
+    let joinPoint4 = new JoinPoint(new Vector2d(200, 245));
+
+    let headBoneTexture = new BoneTexture(
+        headSprite,
+        32,
+        0,
+        -1
+    );
+
+    let bodyBoneTexture = new BoneTexture(
+        bodySprite,
+        1,
+        5
+    );
+
+    let legsBoneTexture = new BoneTexture(
+        legsSprite,
+        0,
+        -10
+    )
 
     bones = [
-        new Bone(joinPoint1, joinPoint2),
-        new Bone(joinPoint2, joinPoint3),
-        new Bone(joinPoint2, joinPoint5),
-        new Bone(joinPoint1, joinPoint7),
+        new Bone(joinPoint3, joinPoint2, bodyBoneTexture),
+        new Bone(joinPoint4, joinPoint3, legsBoneTexture),
     ];
-
-    attackAnimation = new SkeletalAnimation([
-        [
-            new SkeletalStep(bones[3], 330, -30, 20)
-        ]
-    ]);
-
-    walkAnimation = new SkeletalAnimation([
-        [
-            new SkeletalStep(bones[1], 300, 240, 20),
-            new SkeletalStep(bones[2], 240, 300, 20),
-        ]
-    ]);
 
     skeleton = new Skeleton(bones, new Vector2d(300, 300));
 
-    skeleton.addAnimation('attack', attackAnimation);
-    skeleton.addAnimation('walk', walkAnimation);
-
     graphicsManager = new GraphicsManager('graphics-test', 800, 800);
+    animationManager = new AnimationManager(graphicsManager);
+
+    let attackTextureAnimation = new Animation(bodyBoneTexture.sprite, 0, 4, 20);
+    bones[0].addAnimation('attack', attackTextureAnimation);
+
+    let walkTextureAnimation = new Animation(legsBoneTexture.sprite, 5, 7, 20);
+    bones[1].addAnimation('walk', walkTextureAnimation);
 
     InputManager.init('#graphics-test');
 
@@ -93,19 +121,28 @@ function init() {
 
 function loop() {
     if (InputManager.keys[32]) {
-        skeleton.play('attack');
+        bones[0].play('attack');
+    } else if (!InputManager.keys[32]) {
+        bones[0].stop('attack');
     }
 
     if (InputManager.keys[39]) {
-        skeleton.play('walk');
+        bones[1].play('walk');
+    } else if (!InputManager.keys[39]) {
+        bones[1].stop('walk');
     }
+
     graphicsManager.clear();
+    graphicsManager.draw();
     skeleton.draw(graphicsManager);
     skeleton.update();
+    animationManager.update();
     window.requestAnimationFrame(loop);
 }
 
 let i = 0;
 
-init();
+preload().then(() => {
+    init();
+})
 

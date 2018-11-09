@@ -1,16 +1,78 @@
+interface ElementToDraw {
+    callback: Function,
+    args: any[]
+};
+
 export class GraphicsManager {
     private context: CanvasRenderingContext2D;
+    private elementsToDraw: ElementToDraw[] = [];
 
     constructor (canvasElementId: string, private width: number, private height: number) {
         let canvas = <HTMLCanvasElement> document.getElementById(canvasElementId);
         this.context = canvas.getContext("2d");
     }
 
-    drawRectangle(x: number, y: number, w: number, h: number, color: string) {
+    draw() {
+        this.elementsToDraw.forEach((elementsToDraw: ElementToDraw) => {
+            elementsToDraw.callback.call(this, ...elementsToDraw.args);
+        });
+
+        this.elementsToDraw = [];
+    }
+
+    drawRectangle(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawRectangle,
+                args
+            }
+        );
+    }
+    drawCircle(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawCircle,
+                args: Array.from(arguments)
+            }
+        );
+    }
+    drawText(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawText,
+                args: Array.from(arguments)
+            }
+        );
+    }
+    drawImage(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawImage,
+                args: Array.from(arguments)
+            }
+        );
+    }
+    drawFragment(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawFragment,
+                args: Array.from(arguments)
+            }
+        );
+    }
+    drawLine(...args: any[]) {
+        this.elementsToDraw.push(
+            {
+                callback: this._drawLine,
+                args: Array.from(arguments)
+            }
+        );
+    }
+
+    _drawRectangle(x: number, y: number, w: number, h: number, color: string) {
         this.context.save();
         this.context.translate(x, y);
 
-        // console.log(x, y, color);
         this.context.fillStyle = color;
         this.context.fillRect(0, 0, w, h);
         this.context.stroke();
@@ -18,7 +80,7 @@ export class GraphicsManager {
         this.context.restore();
     }
 
-    drawCircle(x: number, y: number, r: number) {
+    _drawCircle(x: number, y: number, r: number) {
         this.context.save();
         this.context.translate(x, y);
 
@@ -31,8 +93,7 @@ export class GraphicsManager {
         this.context.restore();
     }
 
-
-    drawText(x: number, y: number, text: string, color: string, font: string = '20px Arial') {
+    _drawText(x: number, y: number, text: string, color: string, font: string = '20px Arial') {
         this.context.save();
         this.context.translate(x, y);
 
@@ -43,7 +104,7 @@ export class GraphicsManager {
         this.context.restore();
     }
 
-    draw(image: CanvasImageSource, x: number, y: number, dw: number, dh: number) {
+    _drawImage(image: CanvasImageSource, x: number, y: number, dw: number, dh: number) {
         this.context.save();
         this.context.translate(x, y);
 
@@ -52,16 +113,21 @@ export class GraphicsManager {
         this.context.restore();
     }
 
-    drawFragment(image: CanvasImageSource, x: number, y: number, dw: number, dh: number, sx: number, sy: number, sw: number, sh: number) {
+    _drawFragment(image: CanvasImageSource, x: number, y: number, dw: number, dh: number, sx: number, sy: number, sw: number, sh: number, scaleX: number = 1) {
         this.context.save();
         this.context.translate(x, y);
 
+        this.context.scale(scaleX, 1);
         this.context.drawImage(image, sx, sy, sw, sh, 0, 0, dw, dh);
+
+        // this.context.strokeStyle = '#ff0000';
+        // this.context.lineWidth = 2;
+        // this.context.strokeRect(0, 0, dw, dh);
 
         this.context.restore();
     }
 
-    drawLine(x1: number, y1: number, x2: number, y2: number) {
+    _drawLine(x1: number, y1: number, x2: number, y2: number) {
         this.context.save();
         this.context.translate(x1, y1);
 

@@ -12,15 +12,15 @@ export class AnimationManager {
     createAnimation(
         name: string,
         sprite: Sprite,
-        frameRate: number,
         from: number,
-        to: number
+        to: number,
+        frameRate: number
     ) {
         if (this.animations[name]) {
             throw new Error(`Animation with name: ${name} already exists.`);
         }
 
-        this.animations[name] = new Animation(name, sprite, frameRate, from, to);
+        this.animations[name] = new Animation(sprite, from, to, frameRate);
     }
 
     update() {
@@ -30,11 +30,10 @@ export class AnimationManager {
         });
     }
 
-
     draw(name: string, x: number, y: number) {
         this.animations[name].play();
         let frame = this.animations[name].getFrame();
-        this.graphicsManager.drawFragment(frame.source, x, y, 100, 100, frame.dx, frame.dy, frame.dw, frame.dh);
+        this.graphicsManager.drawFragment(frame.source, x, y, 40, 56, frame.dx, frame.dy, frame.dw, frame.dh);
     }
 
     pause(name: string) {

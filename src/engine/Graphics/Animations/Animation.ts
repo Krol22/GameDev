@@ -5,33 +5,43 @@ export enum ANIMATION_STATES {
     IDLE
 };
 
-export class Animation {
-    private state: ANIMATION_STATES = ANIMATION_STATES.IDLE;
+export abstract class AbstractAnimation {
+    public state: ANIMATION_STATES = ANIMATION_STATES.IDLE;
 
-    private step: number = 0;
+    protected step: number = 0;
+
+    abstract update(): void;
+    abstract restart(): void;
+
+    play () {
+        this.state = ANIMATION_STATES.PLAYING;
+    }
+
+    pause () {
+        this.state = ANIMATION_STATES.IDLE;
+    }
+}
+
+export class Animation extends AbstractAnimation {
     private currentFrame: number = 0;
     private numberOfFrames: number;
 
     constructor(
-        private name: string,
         private sprite: Sprite,
-        private frameRate: number,
         private from: number,
-        private to: number
+        private to: number,
+        private frameRate: number
     ) {
+        super();
         this.currentFrame = from;
         this.numberOfFrames = this.to - this.from;
     }
 
-    play() {
-        this.state = ANIMATION_STATES.PLAYING;
+    getFrame () {
+        return this.sprite.getFrame(this.currentFrame + this.from);
     }
 
-    getFrame() {
-        return this.sprite.getFrame(this.currentFrame);
-    }
-
-    update() {
+    update () {
         if (this.state === ANIMATION_STATES.IDLE) {
             return;
         }
@@ -45,11 +55,7 @@ export class Animation {
         }
     }
 
-    pause() {
-        this.state = ANIMATION_STATES.IDLE;
-    }
-
-    stop() {
+    restart () {
         this.state = ANIMATION_STATES.IDLE;
         this.step = 0;
         this.currentFrame = this.from;
