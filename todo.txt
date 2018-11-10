@@ -13,7 +13,7 @@ Done:
         [x] -> Test site with canvas 
 
 Todo:
-    [x] -> Animations Manager,
+    [ ] -> Animations Manager,
         [x] -> Static animations poc,
         [x] -> Static animations,
         [x] -> Skeleton,
@@ -22,8 +22,12 @@ Todo:
             [x] -> Multiple childJoins from one join,
             [x] -> Multiple animation at once (in one skeleton),
             [! removed] -> Easing functions, 
-        [x] -> multiple animations states (run -> on right arrow, hit -> on space)
-        [ ] -> Connect skeletal animations with static animations (add texture)
+        [x] -> multiple animations states (run -> on right arrow, hit -> on space),
+        [x] -> Connect skeletal animations with static animations (add texture),
+        [x] -> Skelet with bones with actual animated textures,
+        [ ] -> Cleaning code for nice components (separate texture animations from skeletal animations),
+        [ ] -> Prepare code for ECS pattern
+        [ ] -> Fix bug with flicking frames in sprite
 
     [ ] -> Debugging tools,
         [] -> Debug drawing tools,
