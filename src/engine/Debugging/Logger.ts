@@ -56,4 +56,8 @@ export const Logger: LoggerIn = {
         let logTime = new Date();
         this.logs.push(`[ ${logTime.getTime() - this.startTime.getTime()} INFO ${strings.join()} ]`);
     },
+
+    dump: function () {
+        return;
+    }
 }

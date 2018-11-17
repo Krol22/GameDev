@@ -9,7 +9,8 @@ export abstract class EcsSystem {
 
     public id: string = '';
     private isActive: boolean = true;
-    private systemEntities: Array<EcsEntity> = [];
+
+    protected systemEntities: Array<EcsEntity> = [];
 
     abstract tick(delta: number): void;
 

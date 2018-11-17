@@ -2,6 +2,14 @@
     Load static width sprite
  */
 
+export interface SpriteFragment {
+    source: CanvasImageSource,
+    dx: number,
+    dy: number,
+    dw: number,
+    dh: number
+}
+
 export class Sprite {
     constructor(
         private source: CanvasImageSource,
@@ -10,7 +18,7 @@ export class Sprite {
         private framesX: number,
     ) { }
 
-    getFrame(frame: number) {
+    getFrame(frame: number): SpriteFragment {
         let dx: number;
         let dy: number;
 

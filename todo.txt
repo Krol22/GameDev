@@ -25,9 +25,10 @@ Todo:
         [x] -> multiple animations states (run -> on right arrow, hit -> on space),
         [x] -> Connect skeletal animations with static animations (add texture),
         [x] -> Skelet with bones with actual animated textures,
-        [ ] -> Cleaning code for nice components (separate texture animations from skeletal animations),
-        [ ] -> Prepare code for ECS pattern
-        [ ] -> Fix bug with flicking frames in sprite
+        [x] -> Cleaning code for nice components 
+        [ ] -> Prepare code for ECS pattern (separate texture animations from skeletal animations),
+        [ ] -> Fix bug with flicking frames in sprite,
+        [ ] -> Pause/Stop animation
 
     [ ] -> Debugging tools,
         [] -> Debug drawing tools,

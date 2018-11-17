@@ -1,9 +1,12 @@
 import { Sprite } from '../Sprite';
+import { Bone } from './SkeletalAnimations';
 
 export enum ANIMATION_STATES {
     PLAYING,
     IDLE
 };
+
+let animation: AbstractAnimation;
 
 export abstract class AbstractAnimation {
     public state: ANIMATION_STATES = ANIMATION_STATES.IDLE;
@@ -15,6 +18,7 @@ export abstract class AbstractAnimation {
 
     play () {
         this.state = ANIMATION_STATES.PLAYING;
+        animation = this;
     }
 
     pause () {
@@ -23,7 +27,7 @@ export abstract class AbstractAnimation {
 }
 
 export class Animation extends AbstractAnimation {
-    private currentFrame: number = 0;
+    protected currentFrame: number = 0;
     private numberOfFrames: number;
 
     constructor(
@@ -35,6 +39,10 @@ export class Animation extends AbstractAnimation {
         super();
         this.currentFrame = from;
         this.numberOfFrames = this.to - this.from;
+    }
+
+    getCurrentFrame () {
+        return this.currentFrame + this.from;
     }
 
     getFrame () {
@@ -53,6 +61,11 @@ export class Animation extends AbstractAnimation {
             this.step = 0;
             this.currentFrame = this.from;
         }
+
+        if (this.currentFrame + this.from >= this.to) {
+            this.state = ANIMATION_STATES.IDLE;
+        }
+
     }
 
     restart () {

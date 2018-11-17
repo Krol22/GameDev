@@ -1,7 +1,6 @@
 import { GraphicsManager } from './engine/Graphics/GraphicsManager';
 import { InputManager } from './engine/Input/InputManger';
 import { Vector2d } from './engine/Math/Vector2d';
-import { EasingFunctions } from './engine/Graphics/Animations/EasingFunctions';
 
 import {
     Bone,
@@ -15,6 +14,7 @@ import {
 import { Sprite } from './engine/Graphics/Sprite';
 import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
 import { Animation } from './engine/Graphics/Animations/Animation';
+import { BoneAnimation } from './engine/Graphics/Animations/SkeletalAnimations/BoneAnimation';
 
 let graphicsManager: GraphicsManager;
 let animationManager: AnimationManager;
@@ -26,10 +26,6 @@ let animation: SkeletalAnimation;
 
 let attackAnimation: SkeletalAnimation;
 let walkAnimation: SkeletalAnimation;
-
-/*
-    Bone should have texture!
-*/
 
 let images: any = {};
 
@@ -70,25 +66,16 @@ function preload() {
 }
 
 function init() {
-    let headSprite = new Sprite(images.head, 34, 42, 1);
     let bodySprite = new Sprite(images.body, 40, 56, 1);
     let legsSprite = new Sprite(images.legs, 40, 56, 1);
 
-    let joinPoint1 = new JoinPoint(new Vector2d(200, 200));
     let joinPoint2 = new JoinPoint(new Vector2d(200, 215));
     let joinPoint3 = new JoinPoint(new Vector2d(200, 230));
     let joinPoint4 = new JoinPoint(new Vector2d(200, 245));
 
-    let headBoneTexture = new BoneTexture(
-        headSprite,
-        32,
-        0,
-        -1
-    );
-
     let bodyBoneTexture = new BoneTexture(
         bodySprite,
-        1,
+        0,
         5
     );
 
@@ -105,14 +92,22 @@ function init() {
 
     skeleton = new Skeleton(bones, new Vector2d(300, 300));
 
+    let walkAnimationSteps = [
+        [ new BoneAnimation(bones[1], 8, 12, 10) ],
+        [ new BoneAnimation(bones[0], 4, 8, 10) ]
+    ];
+
+    let attackAnimationSteps = [
+        [ new BoneAnimation(bones[0], 4, 8, 10) ]
+    ];
+
+    let walkAnimation = new SkeletalAnimation(walkAnimationSteps);
+    let attackAnimation = new SkeletalAnimation(attackAnimationSteps);
+
+    skeleton.addAnimation('walk', walkAnimation);
+    skeleton.addAnimation('attack', attackAnimation);
+
     graphicsManager = new GraphicsManager('graphics-test', 800, 800);
-    animationManager = new AnimationManager(graphicsManager);
-
-    let attackTextureAnimation = new Animation(bodyBoneTexture.sprite, 0, 4, 20);
-    bones[0].addAnimation('attack', attackTextureAnimation);
-
-    let walkTextureAnimation = new Animation(legsBoneTexture.sprite, 5, 7, 20);
-    bones[1].addAnimation('walk', walkTextureAnimation);
 
     InputManager.init('#graphics-test');
 
@@ -121,22 +116,21 @@ function init() {
 
 function loop() {
     if (InputManager.keys[32]) {
-        bones[0].play('attack');
+        skeleton.play('attack');
     } else if (!InputManager.keys[32]) {
-        bones[0].stop('attack');
+        skeleton.stop('attack');
     }
 
     if (InputManager.keys[39]) {
-        bones[1].play('walk');
+        skeleton.play('walk');
     } else if (!InputManager.keys[39]) {
-        bones[1].stop('walk');
+        skeleton.stop('walk');
     }
 
     graphicsManager.clear();
     graphicsManager.draw();
     skeleton.draw(graphicsManager);
     skeleton.update();
-    animationManager.update();
     window.requestAnimationFrame(loop);
 }
 

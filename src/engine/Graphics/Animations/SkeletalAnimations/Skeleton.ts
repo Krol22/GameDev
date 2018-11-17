@@ -1,10 +1,13 @@
 import { Vector2d } from '../../../Math';
 import { GraphicsManager } from '../../GraphicsManager';
-import { Bone, JoinPoint, SkeletalAnimation } from './';
+import { Bone, SkeletalAnimation } from './';
+
+interface AnimationsObj {
+    [key: string]: SkeletalAnimation
+}
 
 export class Skeleton {
-
-    private animations: Object = {};
+    private animations: AnimationsObj = {};
 
     constructor (
         public bones: Bone[],
@@ -29,10 +32,18 @@ export class Skeleton {
 
     play (name: string) {
         if (!this.animations[name]) {
-            throw new Error(`${name} animation doesn't exist.`);
+            throw new Error(`${name} animation doesn't exist!`);
         }
 
         this.animations[name].play();
+    }
+
+    stop (name: string) {
+        if (!this.animations[name]) {
+            throw new Error(`${name} animation doesn't exist!`)
+        }
+
+        this.animations[name].stop();
     }
 
     addAnimation (name: string, animation: SkeletalAnimation) {

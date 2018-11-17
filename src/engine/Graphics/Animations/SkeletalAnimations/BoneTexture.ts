@@ -1,32 +1,37 @@
-import { Sprite } from '../../Sprite';
-import { Bone } from './';
+import { Sprite, SpriteFragment } from '../../Sprite';
 import { Vector2d } from '../../../Math';
 import { GraphicsManager } from '../../GraphicsManager';
 
 export class BoneTexture {
 
+    private currentFrame: number;
+
     constructor(
         public sprite: Sprite,
         public offsetX: number,
         public offsetY: number,
-        public scaleX: number = 1
+        startingFrame: number = 0
     ) {
-
+        this.currentFrame = startingFrame;
     }
 
-    draw(position: Vector2d, graphicsManager: GraphicsManager, currentFrame: number) {
-        let frame = this.sprite.getFrame(currentFrame);
+    draw(position: Vector2d, graphicsManager: GraphicsManager) {
+        let spriteFragment: SpriteFragment = this.sprite.getFrame(this.currentFrame);
+
         graphicsManager.drawFragment(
-            frame.source,
-            position.x + this.offsetX - (frame.dw / 2),
-            position.y + this.offsetY - (frame.dh / 2),
-            frame.dw,
-            frame.dh,
-            frame.dx,
-            frame.dy,
-            frame.dw,
-            frame.dh,
-            this.scaleX
+            spriteFragment.source,
+            position.x + this.offsetX - (spriteFragment.dw / 2),
+            position.y + this.offsetY - (spriteFragment.dh / 2),
+            spriteFragment.dw,
+            spriteFragment.dh,
+            spriteFragment.dx,
+            spriteFragment.dy,
+            spriteFragment.dw,
+            spriteFragment.dh
         );
+    }
+
+    setCurrentFrame(frame: number) {
+        this.currentFrame = frame;
     }
 }
