@@ -1,8 +1,6 @@
 import { ANIMATION_STATES } from '../';
-import { AnimationHelper } from './AnimationHelper';
+import { AnimationHelper, IAnimationComponent } from '../';
 import { EcsSystem } from '../../ECS';
-
-import { IAnimationComponent } from './Components/IAnimationComponent';
 
 export class StaticAnimationSystem extends EcsSystem {
 

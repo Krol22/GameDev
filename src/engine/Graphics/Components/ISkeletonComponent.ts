@@ -1,5 +1,5 @@
-import { Vector2d } from '../../../Math';
-import { Sprite } from '../../';
+import { Vector2d } from '../../Math';
+import { Sprite } from '../';
 import { IAnimationComponent, ANIMATION_STATES } from './IAnimationComponent';
 
 export interface IJoinPoint {

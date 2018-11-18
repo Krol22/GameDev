@@ -4,9 +4,7 @@ import { GraphicsManager, ANIMATION_STATES, Sprite } from './engine/Graphics';
 import { ECS, EcsEntity, EcsComponent } from './engine/ECS';
 import { EventAggregator } from './engine/EventAggregator';
 
-import { SkeletalSystem } from './engine/Graphics/ECS/SkeletalSystem';
-import { DrawSystem } from './engine/Graphics/ECS/DrawSystem';
-import { StaticAnimationSystem } from './engine/Graphics/ECS/StaticAnimationSystem';
+import { SkeletalSystem, DrawSystem, StaticAnimationSystem } from './engine/Graphics/';
 import { Vector2d } from './engine/Math';
 
 let images: any = {};

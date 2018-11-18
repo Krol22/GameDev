@@ -1,10 +1,17 @@
 import { EcsSystem, EcsComponent } from '../../ECS';
-import { ANIMATION_STATES, GraphicsManager } from '../';
 import { Vector2d } from '../../Math';
-import { AnimationHelper } from './AnimationHelper';
-import { SpriteHelper } from './SpriteHelper';
 
-import { ISkeletonComponent, IJoinPoint, ISkeletonAnimation, ISkeletonAnimationStep, IBone } from './Components';
+import {
+    AnimationHelper,
+    SpriteHelper,
+    ANIMATION_STATES,
+    GraphicsManager,
+    ISkeletonComponent,
+    IJoinPoint,
+    ISkeletonAnimation,
+    ISkeletonAnimationStep,
+    IBone
+} from '../';
 
 export const SkeletalAnimationHelper = {
     rotate(angle: number, rotatePoint: IJoinPoint, aroundPoint: IJoinPoint, skeleton: ISkeletonComponent) {

@@ -1,7 +1,6 @@
 import { EcsSystem } from '../../ECS';
-import { SpriteHelper } from './SpriteHelper';
+import { SpriteHelper, IDrawComponent } from '../';
 import { GraphicsManager } from '../GraphicsManager';
-import { IDrawComponent } from './Components/IDrawComponent';
 
 export class DrawSystem extends EcsSystem {
 

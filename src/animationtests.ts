@@ -1,3 +1,5 @@
+/*
+
 import { GraphicsManager } from './engine/Graphics/GraphicsManager';
 import { Animation } from './engine/Graphics/Animations/Animation';
 import { Sprite } from './engine/Graphics/Sprite';
@@ -109,3 +111,5 @@ window.addEventListener('keyup', (event: KeyboardEvent) => {
     vx = 0;
     state = 'STANDING';
 });
+
+*/

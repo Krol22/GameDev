@@ -1,3 +1,4 @@
+/*
 import { GraphicsManager } from './engine/Graphics/GraphicsManager';
 import { InputManager } from './engine/Input/InputManger';
 import { Vector2d } from './engine/Math/Vector2d';
@@ -140,3 +141,4 @@ preload().then(() => {
     init();
 })
 
+    */

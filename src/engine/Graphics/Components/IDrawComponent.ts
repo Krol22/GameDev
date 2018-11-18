@@ -1,5 +1,5 @@
-import { Vector2d } from '../../../Math';
-import { Sprite } from '../../';
+import { Vector2d } from '../../Math';
+import { Sprite } from '../';
 
 export interface IDrawComponent {
     position: Vector2d,
