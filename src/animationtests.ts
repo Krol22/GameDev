@@ -3,7 +3,6 @@ import { Animation } from './engine/Graphics/Animations/Animation';
 import { Sprite } from './engine/Graphics/Sprite';
 import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
 
-let graphicsManager: GraphicsManager;
 let animationManager: AnimationManager;
 
 let walkImage: CanvasImageSource;
@@ -29,8 +28,8 @@ let vx = 0;
 function init() {
     return new Promise((resolve, reject) => {
         let loaded = false;
-        graphicsManager = new GraphicsManager('graphics-test', 800, 600);
-        animationManager = new AnimationManager(graphicsManager);
+        GraphicsManager.init('graphics-test', 800, 600);
+        animationManager = new AnimationManager();
 
         attackImage = new Image();
         attackImage.src = './assets/Slashing/slash_sprite.png';
@@ -66,9 +65,9 @@ function createAnimations() {
 function loop() {
     let frame;
 
-    graphicsManager.clear();
-    graphicsManager.drawRectangle(100, 100, 120, 80, '#ff0000');
-    graphicsManager.drawText(60, 80, 'Test text', '#00ff00');
+    GraphicsManager.clear();
+    GraphicsManager.drawRectangle(100, 100, 120, 80, '#ff0000');
+    GraphicsManager.drawText(60, 80, 'Test text', '#00ff00');
 
     if (state === 'STANDING') {
         animationManager.stop('goblin_walk');

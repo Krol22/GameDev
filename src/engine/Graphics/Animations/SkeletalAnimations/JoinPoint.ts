@@ -19,8 +19,8 @@ export class JoinPoint {
         this.childJoinPoints = [];
     }
 
-    draw (graphicsManager: GraphicsManager) {
-        graphicsManager.drawRectangle(this.position.x - 5, this.position.y - 5, this.width, this.width, this.hovered ? (this.clicked ? 'blue' : 'red') : 'green');
+    draw () {
+        GraphicsManager.drawRectangle(this.position.x - 5, this.position.y - 5, this.width, this.width, this.hovered ? (this.clicked ? 'blue' : 'red') : 'green');
     }
 
     update () {

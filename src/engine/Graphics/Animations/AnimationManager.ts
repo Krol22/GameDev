@@ -6,7 +6,6 @@ export class AnimationManager {
     private animations: Object = {};
 
     constructor(
-        private graphicsManager: GraphicsManager
     ) {}
 
     createAnimation(
@@ -33,7 +32,7 @@ export class AnimationManager {
     draw(name: string, x: number, y: number) {
         this.animations[name].play();
         let frame = this.animations[name].getFrame();
-        this.graphicsManager.drawFragment(frame.source, x, y, 40, 56, frame.dx, frame.dy, frame.dw, frame.dh);
+        GraphicsManager.drawFragment(frame.source, x, y, 40, 56, frame.dx, frame.dy, frame.dw, frame.dh);
     }
 
     pause(name: string) {

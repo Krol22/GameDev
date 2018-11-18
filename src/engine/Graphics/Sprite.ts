@@ -12,10 +12,10 @@ export interface SpriteFragment {
 
 export class Sprite {
     constructor(
-        private source: CanvasImageSource,
-        private frameWidth: number,
-        private frameHeight: number,
-        private framesX: number,
+        public source: CanvasImageSource,
+        public frameWidth: number,
+        public frameHeight: number,
+        public framesX: number,
     ) { }
 
     getFrame(frame: number): SpriteFragment {

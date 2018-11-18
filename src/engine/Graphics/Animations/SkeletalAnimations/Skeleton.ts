@@ -14,9 +14,9 @@ export class Skeleton {
         public position: Vector2d
     ) { }
 
-    draw(graphicsManager: GraphicsManager) {
+    draw() {
         this.bones.forEach((bone: Bone) => {
-            bone.draw(graphicsManager);
+            // bone.draw();
         });
     }
 

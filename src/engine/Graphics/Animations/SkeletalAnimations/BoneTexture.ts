@@ -15,10 +15,10 @@ export class BoneTexture {
         this.currentFrame = startingFrame;
     }
 
-    draw(position: Vector2d, graphicsManager: GraphicsManager) {
+    draw(position: Vector2d) {
         let spriteFragment: SpriteFragment = this.sprite.getFrame(this.currentFrame);
 
-        graphicsManager.drawFragment(
+        GraphicsManager.drawFragment(
             spriteFragment.source,
             position.x + this.offsetX - (spriteFragment.dw / 2),
             position.y + this.offsetY - (spriteFragment.dh / 2),

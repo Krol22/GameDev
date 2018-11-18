@@ -1,31 +1,13 @@
-import { GraphicsManager } from './engine/Graphics/GraphicsManager';
 import { InputManager } from './engine/Input/InputManger';
-import { Vector2d } from './engine/Math/Vector2d';
+import { GraphicsManager, ANIMATION_STATES, Sprite } from './engine/Graphics';
 
-import {
-    Bone,
-    Skeleton,
-    JoinPoint,
-    SkeletalStep,
-    SkeletalAnimation,
-    BoneTexture
-} from './engine/Graphics/Animations/SkeletalAnimations';
+import { ECS, EcsEntity, EcsComponent } from './engine/ECS';
+import { EventAggregator } from './engine/EventAggregator';
 
-import { Sprite } from './engine/Graphics/Sprite';
-import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
-import { Animation } from './engine/Graphics/Animations/Animation';
-import { BoneAnimation } from './engine/Graphics/Animations/SkeletalAnimations/BoneAnimation';
-
-let graphicsManager: GraphicsManager;
-let animationManager: AnimationManager;
-let skeleton: Skeleton;
-let bones: Bone[];
-
-let animationSteps: SkeletalStep[][];
-let animation: SkeletalAnimation;
-
-let attackAnimation: SkeletalAnimation;
-let walkAnimation: SkeletalAnimation;
+import { SkeletalSystem } from './engine/Graphics/ECS/SkeletalSystem';
+import { DrawSystem } from './engine/Graphics/ECS/DrawSystem';
+import { StaticAnimationSystem } from './engine/Graphics/ECS/StaticAnimationSystem';
+import { Vector2d } from './engine/Math';
 
 let images: any = {};
 
@@ -65,72 +47,165 @@ function preload() {
     });
 }
 
+let eventAggregator = new EventAggregator();
+let ecs = new ECS(eventAggregator);
+let skeletalEntity: any;
+
 function init() {
-    let bodySprite = new Sprite(images.body, 40, 56, 1);
-    let legsSprite = new Sprite(images.legs, 40, 56, 1);
+    let animationSystem = new StaticAnimationSystem(eventAggregator, ['animation']);
+    let drawSystem = new DrawSystem(eventAggregator, ['draw']);
+    let skeletalSystem = new SkeletalSystem(eventAggregator, ['skeleton']);
 
-    let joinPoint2 = new JoinPoint(new Vector2d(200, 215));
-    let joinPoint3 = new JoinPoint(new Vector2d(200, 230));
-    let joinPoint4 = new JoinPoint(new Vector2d(200, 245));
+    let animatedComponents: EcsComponent[] = [
+        new EcsComponent('draw',
+            {
+                position: new Vector2d(100, 100),
+                destWidth: 40,
+                destHeight: 56,
+                sprite: new Sprite(images.body, 40, 56, 1)
+            }
+        ),
+        new EcsComponent('animation',
+            {
+                state: ANIMATION_STATES.PLAYING,
+                step: 0,
+                from: 4,
+                to: 8,
+                frameRate: 10,
+                currentFrame: 0,
+                loop: true
+            }
+        )
+    ];
 
-    let bodyBoneTexture = new BoneTexture(
-        bodySprite,
-        0,
-        5
+    let skeletalComponent = new EcsComponent('skeleton',
+        {
+            joinPoints: [
+                {
+                    id: 1,
+                    position: new Vector2d(100, 150),
+                    childJoinPoints: [2],
+                },
+                {
+                    id: 2,
+                    position: new Vector2d(120, 150),
+                    parentJoinPoint: 1,
+                    childJoinPoints: [3]
+                },
+                {
+                    id: 3,
+                    position: new Vector2d(140, 140),
+                    parentJoinPoint: 2
+                }
+            ],
+            bones: [
+                {
+                    id: 1,
+                    parentJoinPointId: 1,
+                    childJoinPointId: 2,
+                    texture: {
+                        sprite: new Sprite(images.legs, 40, 56, 1),
+                        offsetX: 0,
+                        offsetY: 0,
+                        currentFrame: 1
+                    }
+                },
+                {
+                    id: 2,
+                    parentJoinPointId: 2,
+                    childJoinPointId: 3,
+                    texture: {
+                        sprite: new Sprite(images.body, 40, 56, 1),
+                        offsetX: -20,
+                        offsetY: 0,
+                        currentFrame: 1
+                    }
+                }
+            ],
+            animations: [
+                {
+                    id: 0,
+                    name: 'walk',
+                    state: ANIMATION_STATES.PLAYING,
+                    stepIndex: 0,
+                    steps: [
+                        [
+                            {
+                                animationId: 1,
+                                boneId: 1,
+                                state: ANIMATION_STATES.PLAYING,
+                                from: 4,
+                                to: 8,
+                                currentFrame: 0,
+                                frameRate: 10,
+                                loop: true,
+                                step: 0
+                            },
+                            {
+                                animationId: 2,
+                                boneId: 2,
+                                state: ANIMATION_STATES.PLAYING,
+                                from: 5,
+                                to: 8,
+                                currentFrame: 0,
+                                frameRate: 10,
+                                loop: true,
+                                step: 0
+                            }
+                        ],
+                    ]
+                },
+                {
+                    id: 1,
+                    name: 'attack',
+                    state: ANIMATION_STATES.PLAYING,
+                    stepIndex: 0,
+                    steps: [
+                        [
+                            {
+                                animationId: 1,
+                                boneId: 2,
+                                state: ANIMATION_STATES.PLAYING,
+                                from: 0,
+                                to: 4,
+                                currentFrame: 8,
+                                frameRate: 10,
+                                loop: false,
+                                step: 0
+                            }
+                        ]
+                    ]
+                }
+            ]
+        }
     );
 
-    let legsBoneTexture = new BoneTexture(
-        legsSprite,
-        0,
-        -10
-    )
+    skeletalEntity = new EcsEntity([ skeletalComponent ]);
+    let animatedEntity = new EcsEntity(animatedComponents);
 
-    bones = [
-        new Bone(joinPoint3, joinPoint2, bodyBoneTexture),
-        new Bone(joinPoint4, joinPoint3, legsBoneTexture),
-    ];
-
-    skeleton = new Skeleton(bones, new Vector2d(300, 300));
-
-    let walkAnimationSteps = [
-        [ new BoneAnimation(bones[1], 8, 12, 10) ],
-        [ new BoneAnimation(bones[0], 4, 8, 10) ]
-    ];
-
-    let attackAnimationSteps = [
-        [ new BoneAnimation(bones[0], 4, 8, 10) ]
-    ];
-
-    let walkAnimation = new SkeletalAnimation(walkAnimationSteps);
-    let attackAnimation = new SkeletalAnimation(attackAnimationSteps);
-
-    skeleton.addAnimation('walk', walkAnimation);
-    skeleton.addAnimation('attack', attackAnimation);
-
-    graphicsManager = new GraphicsManager('graphics-test', 800, 800);
-
+    GraphicsManager.init('graphics-test', 800, 800);
     InputManager.init('#graphics-test');
+
+    ecs.addEntity(animatedEntity);
+    ecs.addEntity(skeletalEntity);
+
+    ecs.addSystem(animationSystem);
+    ecs.addSystem(drawSystem);
+    ecs.addSystem(skeletalSystem);
 
     loop();
 }
 
 function loop() {
     if (InputManager.keys[32]) {
-        skeleton.play('attack');
+        skeletalEntity.getComponent('skeleton').data.animations[1].state = ANIMATION_STATES.PLAYING;
     } else if (!InputManager.keys[32]) {
-        skeleton.stop('attack');
+        skeletalEntity.getComponent('skeleton').data.animations[1].state = ANIMATION_STATES.IDLE;
+        skeletalEntity.getComponent('skeleton').data.animations[1].currentFrame = 8;
     }
-
-    if (InputManager.keys[39]) {
-        skeleton.play('walk');
-    } else if (!InputManager.keys[39]) {
-        skeleton.stop('walk');
-    }
-
-    graphicsManager.clear();
-    graphicsManager.draw();
-    skeleton.draw(graphicsManager);
-    skeleton.update();
+    GraphicsManager.clear();
+    ecs.update(0);
+    GraphicsManager.draw();
     window.requestAnimationFrame(loop);
 }
 
@@ -138,5 +213,4 @@ let i = 0;
 
 preload().then(() => {
     init();
-})
-
+});

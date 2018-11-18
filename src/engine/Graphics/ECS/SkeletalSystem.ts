@@ -1,121 +1,102 @@
 import { EcsSystem, EcsComponent } from '../../ECS';
-import { ANIMATION_STATES } from '../';
+import { ANIMATION_STATES, GraphicsManager } from '../';
+import { Vector2d } from '../../Math';
+import { AnimationHelper } from './AnimationHelper';
+import { SpriteHelper } from './SpriteHelper';
 
-/*
-    skeleton: {
-        joinPoints [
-            {
-                id: 1,
-                position: vector2d()
-            },
-            {
-                id: 2,
-                position: vector2d()
-            }
-        ]
-        bones: [
-            {
-                id: 1,
-                joinPoints: [1, 2],
-                texture: {
-                    sprite: {
-                        image,
-                        frameWidth,
-                        frameHeight,
-                        frames
-                    }
-                }
-            }
-        ],
-        animations: [
-            {
-                name: String
-                steps: [
-                    [
-                        {
-                            boneId: 1,
-                            fromFrame: 4,
-                            toFrame: 8,
-                            frameRate: 10
-                        }
-                    ]
-                ]
-            }
-        ]
+import { ISkeletonComponent, IJoinPoint, ISkeletonAnimation, ISkeletonAnimationStep, IBone } from './Components';
+
+export const SkeletalAnimationHelper = {
+    rotate(angle: number, rotatePoint: IJoinPoint, aroundPoint: IJoinPoint, skeleton: ISkeletonComponent) {
+        let parentPosition = aroundPoint.position;
+        let childPosition = rotatePoint.position;
+
+        let r = Vector2d.magnitude(parentPosition, childPosition);
+        let oldPosition = new Vector2d(childPosition.x, childPosition.y);
+
+        childPosition.x = parentPosition.x + r * Math.cos(angle);
+        childPosition.y = parentPosition.y + r * Math.sin(angle);
+
+        if (!rotatePoint.childJoinPoints) {
+            return;
+        }
+
+        rotatePoint.childJoinPoints.forEach((childJoinPointId: number) => {
+            let childJoinPoint = skeleton.joinPoints.find((joinPoint: IJoinPoint) => joinPoint.id === childJoinPointId);
+            let oxVector = new Vector2d(parentPosition.x + 500, parentPosition.y);
+
+            let alphaPrime = Vector2d.findAngle(childPosition, parentPosition, oxVector);
+            let alpha = Vector2d.findAngle(oldPosition, parentPosition, oxVector);
+            let beta = Vector2d.findAngle(childJoinPoint.position, parentPosition, oxVector);
+
+            let gamma = alpha - beta;
+            let betaPrime = alphaPrime - gamma;
+
+            betaPrime = -betaPrime;
+            this.rotate(betaPrime, childJoinPoint, aroundPoint, skeleton);
+        });
     }
- */
+}
 
 export class SkeletalSystem extends EcsSystem {
-
-    tick(delta: number) {
-        this.systemEntities.forEach((entity) => {
-        });
-    }
-
-}
-
-export const AnimationHelper = {
-    update: (animationData: any) => {
-        animationData.step += 1;
-        animationData.currentFrame = Math.floor(animationData.step / animationData.frameRate) + 1;
-
-        if (animationData.step >= animationData.frameRate * animationData.numberOfFrames) {
-            animationData.step = 0;
-            animationData.currentFrame = animationData.from;
-        }
-
-        if (animationData.currentFrame + animationData.from >= animationData.to) {
-            animationData.state = ANIMATION_STATES.IDLE;
-        }
-    }
-}
-
-export class AnimationSystem extends EcsSystem {
-
     /*
-    Handles animations normal static or bone texture animations.
-
-    AnimationComponent
-    {
-        state: ANIMATION_STATES,
-        step: number,
-        from: number,
-        to: number,
-        frameRate: number,
-        currentFrame: number,
-    }
+        Handles ISkeletonComponent
     */
 
     tick(delta: number) {
         this.systemEntities.forEach((entity) => {
-            let animationComponent = entity.getComponent('animation');
+            let skeleton: ISkeletonComponent = entity.getComponent('skeleton').data;
 
-            if (animationComponent.data.state === ANIMATION_STATES.IDLE) {
-                return;
-            }
+            skeleton.joinPoints.forEach((joinPoint: IJoinPoint) => {
+                GraphicsManager.drawRectangle(joinPoint.position.x, joinPoint.position.y, 10, 10);
+            });
 
-            AnimationHelper.update(animationComponent.data);
-        });
-    }
+            skeleton.bones.forEach((bone: IBone) => {
+                if (bone.texture) {
+                    let texture = bone.texture;
+                    let parentJoinPoint = skeleton.joinPoints.find((joinPoint: IJoinPoint) => joinPoint.id === bone.parentJoinPointId);
+                    let spriteFragmentVector = SpriteHelper.getFrame(texture.sprite, texture.currentFrame);
+                    GraphicsManager.drawFragment(
+                        texture.sprite.source,
+                        parentJoinPoint.position.x + texture.offsetX,
+                        parentJoinPoint.position.y + texture.offsetY,
+                        texture.sprite.frameWidth,
+                        texture.sprite.frameHeight,
+                        spriteFragmentVector.x,
+                        spriteFragmentVector.y,
+                        texture.sprite.frameWidth,
+                        texture.sprite.frameHeight,
+                    );
+                }
+            });
 
-}
+            skeleton.animations.forEach((animation: ISkeletonAnimation) => {
+                if (animation.state === ANIMATION_STATES.IDLE) {
+                    return;
+                }
 
-export class DrawSystem extends EcsSystem {
+                let numberOfSteps = animation.steps.length;
+                let animationSteps = animation.steps[animation.stepIndex];
 
-    /*
-        Handles drawing for static elements and animated elements.
-    */
+                animationSteps.forEach((animation: ISkeletonAnimationStep) => {
+                    AnimationHelper.update(animation);
+                    let bone: IBone = skeleton.bones.find((bone: IBone) => bone.id === animation.boneId);
+                    bone.texture.currentFrame = animation.from + animation.currentFrame;
+                });
 
-    tick(delta: number) {
-        this.systemEntities.forEach((entity) => {
-            let isAnimatedEntity = entity.hasComponent('animation');
-            // let isSpriteEntity = entity.hasComponent('sprite');
+                let stepDone = animationSteps.every((animation: ISkeletonAnimationStep) => {
+                    return animation.state === ANIMATION_STATES.IDLE;
+                });
 
-            if (isAnimatedEntity) {
-                let animationComponent = entity.getComponent('animation');
+                if (stepDone) {
+                    animation.stepIndex += 1;
+                }
 
-
-            }
+                if (animation.stepIndex === numberOfSteps) {
+                    animation.state = ANIMATION_STATES.IDLE;
+                    animation.stepIndex = 0;
+                }
+            });
         });
     }
 

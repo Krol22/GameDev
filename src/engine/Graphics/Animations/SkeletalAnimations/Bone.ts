@@ -11,18 +11,18 @@ export class Bone {
         childJoinPoint.parentJoinPoint = parentJoinPoint;
     }
 
-    draw(graphicsManager: GraphicsManager) {
+    draw() {
         if (false) {
-            this.parentJoinPoint.draw(graphicsManager);
-            this.childJoinPoint.draw(graphicsManager);
-            this.debug(graphicsManager);
+            this.parentJoinPoint.draw();
+            this.childJoinPoint.draw();
+            this.debug();
         }
 
         if (!this.texture) {
             return;
         }
 
-        this.texture.draw(this.childJoinPoint.position, graphicsManager);
+        this.texture.draw(this.childJoinPoint.position);
     }
 
     setAngle(angle: number) {
@@ -30,8 +30,8 @@ export class Bone {
         this.childJoinPoint.rotate(angle, this.parentJoinPoint.position);
     }
 
-    debug(graphicsManager: GraphicsManager) {
-        graphicsManager.drawLine(
+    debug() {
+        GraphicsManager.drawLine(
             this.parentJoinPoint.position.x,
             this.parentJoinPoint.position.y,
             this.childJoinPoint.position.x,

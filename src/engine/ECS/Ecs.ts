@@ -38,7 +38,8 @@ export class ECS {
         this._runOrPushToAfterUpdateStack(this._removeEntity, entityId);
     }
 
-    addSystem(newSystem: EcsSystem) {
+    // FIXME
+    addSystem(newSystem: any) {
         newSystem.id = this._nextId();
         this._runOrPushToAfterUpdateStack(this._addSystem, newSystem);
 
