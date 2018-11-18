@@ -26,9 +26,12 @@ Todo:
         [x] -> Connect skeletal animations with static animations (add texture),
         [x] -> Skelet with bones with actual animated textures,
         [x] -> Cleaning code for nice components 
-        [ ] -> Prepare code for ECS pattern (separate texture animations from skeletal animations),
-        [ ] -> Fix bug with flicking frames in sprite,
-        [ ] -> Pause/Stop animation
+        [x] -> Prepare code for ECS pattern (separate texture animations from skeletal animations),
+        [ ] -> Way of createing component that has to be an interface
+        [ ] -> Pause/Stop animation,
+        [ ] -> Static images drawing,
+        [ ] -> Maybe move away
+        [ ] -> Documentation and tests and DONE!
 
     [ ] -> Debugging tools,
         [] -> Debug drawing tools,
