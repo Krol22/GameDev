@@ -1,6 +1,6 @@
 import { Vector2d } from '../../Math';
 import { Sprite } from '../';
-import { IAnimationComponent, ANIMATION_STATES } from './IAnimationComponent';
+import { Animation, ANIMATION_STATES } from './IAnimationComponent';
 
 export interface IJoinPoint {
     id: number,
@@ -21,19 +21,17 @@ export interface IBone {
     }
 };
 
-export interface ISkeletonAnimationStep extends IAnimationComponent {
-    boneId: number,
-}
-
 export interface ISkeletonAnimation {
     id: 0,
     name: string,
     state: ANIMATION_STATES,
     stepIndex: 0,
-    steps: ISkeletonAnimationStep[][]
+    loop: boolean,
+    steps: Animation[][]
 };
 
 export interface ISkeletonComponent {
+    debug: boolean,
     joinPoints: IJoinPoint[],
     bones: IBone[],
     animations: ISkeletonAnimation[]

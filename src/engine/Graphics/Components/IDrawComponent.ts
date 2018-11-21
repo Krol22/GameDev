@@ -5,5 +5,6 @@ export interface IDrawComponent {
     position: Vector2d,
     destWidth: number,
     destHeight: number,
-    sprite: any
+    sprite: any,
+    staticFrame: number
 }

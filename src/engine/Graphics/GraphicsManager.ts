@@ -148,10 +148,6 @@ export const GraphicsManager = {
         this.context.scale(scaleX, 1);
         this.context.drawImage(image, sx, sy, sw, sh, 0, 0, dw, dh);
 
-        // this.context.strokeStyle = '#ff0000';
-        // this.context.lineWidth = 2;
-        // this.context.strokeRect(0, 0, dw, dh);
-
         this.context.restore();
     },
 
@@ -162,6 +158,7 @@ export const GraphicsManager = {
         this.context.beginPath();
         this.context.moveTo(0, 0);
         this.context.lineTo(x2 - x1, y2 - y1);
+        this.context.stroke();
 
         this.context.restore();
     },

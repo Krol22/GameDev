@@ -27,11 +27,20 @@ Todo:
         [x] -> Skelet with bones with actual animated textures,
         [x] -> Cleaning code for nice components 
         [x] -> Prepare code for ECS pattern (separate texture animations from skeletal animations),
-        [ ] -> Way of createing component that has to be an interface
-        [ ] -> Pause/Stop animation,
-        [ ] -> Static images drawing,
-        [ ] -> Maybe move away
+
+        [x] -> Prepare demo -> 
+                [x] Player (bone texture animations) -> With armor changes
+                [x] static box,
+                [x] tree (static looped animation), 
+                [x] just bone animation,
+
         [ ] -> Documentation and tests and DONE!
+
+    [ ] -> UIManager,
+        [ ] -> create basic UI components like -> Text, Button, Grid, NestingComponents
+        [ ] -> unit tests for UIManager,
+
+    [ ] -> Overall show case page,
 
     [ ] -> Debugging tools,
         [] -> Debug drawing tools,
@@ -44,13 +53,6 @@ Todo:
         [  ] -> Texture/sound metadata,
         [  ] -> Test AssetsLoader with GraphicManager,
         [  ] -> Some kind of progress information -> "LOADED/INITIAL", "LOADING {0}" ({0} -> stands for percentage of loaded files),
-    [ ] -> ECS,
-        [  ] -> Pasue/resume functions,
-        [  ] -> Get entity reference by entityId,
-
-    [ ] -> UIManager,
-        [ ] -> create basic UI components like -> Text, Button, Grid, NestingComponents
-        [ ] -> unit tests for UIManager,
     [ ] -> SceneManager
         [ ] -> unit tests for SceneManager,
     [ ] -> InputManager
@@ -59,6 +61,18 @@ Todo:
         [ ] -> unit tests for SoundManager,
     [ ] -> importing and exporting state from ECS,
 
+ToDo_v2:
+
+    [ ] -> Animation manager - angle animation:
+        [  ] -> increase animation not from - to,
+        [  ] -> change step (not fluid but change angle f.e by 2 degrees)
+
+    [ ] -> ECS,
+        [  ] -> Pasue/resume functions,
+        [  ] -> Get entity reference by entityId,
+        [  ] -> Way of creating component that has to be an interface
+
+    [ ] -> Join points werid position
 
 So the UI manager will have to work seperatly from ECS. I would like to use ECS as separate concept and only communicate with it by events? Dunno exactly how then connect it with input events. I think the ECS should have some kind of getting specific entity outside system so different Managers could do some work on them f.e. 
 
