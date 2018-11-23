@@ -1,5 +1,5 @@
 import { ANIMATION_STATES } from '../';
-import { AnimationHelper, IAnimationComponent } from '../';
+import { AnimationHelper, Animation } from '../';
 import { EcsSystem } from '../../ECS';
 
 export class StaticAnimationSystem extends EcsSystem {
@@ -10,7 +10,7 @@ export class StaticAnimationSystem extends EcsSystem {
 
     tick(delta: number) {
         this.systemEntities.forEach((entity) => {
-            let animation: IAnimationComponent = entity.getComponent('animation').data;
+            let animation: Animation = entity.getComponent('animation').data;
 
             if (animation.state === ANIMATION_STATES.IDLE) {
                 return;

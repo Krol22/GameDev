@@ -1,3 +1,8 @@
+Legend: 
+    {!} -> bug,
+    [!] -> functionality removed,
+    [*] -> to be discussed,
+    
 Done:
     [x] -> ECS basic,
         [x] -> Entities,
@@ -12,8 +17,7 @@ Done:
         [x] -> Draw texture fragment (sprite),
         [x] -> Test site with canvas 
 
-Todo:
-    [ ] -> Animations Manager,
+    [x] -> Animations Manager,
         [x] -> Static animations poc,
         [x] -> Static animations,
         [x] -> Skeleton,
@@ -21,7 +25,7 @@ Todo:
         [x] -> Skeletal animations,
             [x] -> Multiple childJoins from one join,
             [x] -> Multiple animation at once (in one skeleton),
-            [! removed] -> Easing functions, 
+            [!] -> Easing functions, 
         [x] -> multiple animations states (run -> on right arrow, hit -> on space),
         [x] -> Connect skeletal animations with static animations (add texture),
         [x] -> Skelet with bones with actual animated textures,
@@ -33,14 +37,25 @@ Todo:
                 [x] static box,
                 [x] tree (static looped animation), 
                 [x] just bone animation,
+        [x] -> Documentation and DONE!
 
-        [ ] -> Documentation and tests and DONE!
+Todo:
+
+    [ ] -> ECS 
+        [ ] -> {!} Created systems should take eventAggregator as an import,
+        [ ] -> {!} Component types for system should be defined in system class not when creating one,
 
     [ ] -> UIManager,
-        [ ] -> create basic UI components like -> Text, Button, Grid, NestingComponents
-        [ ] -> unit tests for UIManager,
+        [ ] -> add create react app with ts,
+        [ ] -> create a showcase page,
+        [ ] -> create basic UI for game,
+        [ ] -> documentation,
 
-    [ ] -> Overall show case page,
+    [ ] -> {!} Sprite add total number of frames,
+        
+    [ ] -> Animation Manager,
+        [ ] -> unit tests
+
 
     [ ] -> Debugging tools,
         [] -> Debug drawing tools,
@@ -64,13 +79,13 @@ Todo:
 ToDo_v2:
 
     [ ] -> Animation manager - angle animation:
-        [  ] -> increase animation not from - to,
-        [  ] -> change step (not fluid but change angle f.e by 2 degrees)
+        [ ] -> increase animation not from - to,
+        [ ] -> change step (not fluid but change angle f.e by 2 degrees)
 
     [ ] -> ECS,
-        [  ] -> Pasue/resume functions,
-        [  ] -> Get entity reference by entityId,
-        [  ] -> Way of creating component that has to be an interface
+        [ ] -> Pasue/resume functions,
+        [ ] -> Get entity reference by entityId,
+        [ ] -> Way of creating component that has to be an interface,
 
     [ ] -> Join points werid position
 

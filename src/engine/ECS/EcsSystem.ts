@@ -41,7 +41,7 @@ export abstract class EcsSystem {
     }
 
     private _isEntityForSystem(entity: EcsEntity): boolean {
-        let isSystemEntity = this.componentTypes.every(componentType => {
+        let isSystemEntity = this.componentTypes.some(componentType => {
             return entity.hasComponent(componentType);
         });
 

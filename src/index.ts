@@ -1,3 +1,5 @@
+let a = require('./webpage/animations.html');
+
 import { InputManager } from './engine/Input/InputManger';
 import { GraphicsManager, ANIMATION_STATES, Sprite, ANIMATION_TYPES, BoneTextureAnimationComponent, AngleAnimationComponent } from './engine/Graphics';
 
@@ -62,7 +64,7 @@ let skeletalEntity: any;
 
 function init() {
     let animationSystem = new StaticAnimationSystem(eventAggregator, ['animation']);
-    let drawSystem = new DrawSystem(eventAggregator, ['draw']);
+    let drawSystem = new DrawSystem(eventAggregator, ['draw', 'skeleton']);
     let skeletalSystem = new SkeletalSystem(eventAggregator, ['skeleton']);
 
     let staticDrawComponents: EcsComponent[] = [

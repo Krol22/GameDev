@@ -87,27 +87,6 @@ export class SkeletalSystem extends EcsSystem {
                 });
             }
 
-            // Skeleton texture drawing TODO: move to draw system!
-
-            skeleton.bones.forEach((bone: IBone) => {
-                if (bone.texture) {
-                    let texture = bone.texture;
-                    let parentJoinPoint = skeleton.joinPoints.find((joinPoint: IJoinPoint) => joinPoint.id === bone.parentJoinPointId);
-                    let spriteFragmentVector = SpriteHelper.getFrame(texture.sprite, texture.currentFrame);
-                    GraphicsManager.drawFragment(
-                        texture.sprite.source,
-                        parentJoinPoint.position.x + texture.offsetX,
-                        parentJoinPoint.position.y + texture.offsetY,
-                        texture.sprite.frameWidth,
-                        texture.sprite.frameHeight,
-                        spriteFragmentVector.x,
-                        spriteFragmentVector.y,
-                        texture.sprite.frameWidth,
-                        texture.sprite.frameHeight,
-                    );
-                }
-            });
-
             if (!skeleton.animations) {
                 return;
             }
