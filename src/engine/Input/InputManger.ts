@@ -29,7 +29,5 @@ export const InputManager = {
         window.addEventListener('keyup', (e: KeyboardEvent) => {
             this.keys[e.keyCode] = false;
         });
-
-        console.log('test');
     }
 }

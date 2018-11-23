@@ -1,31 +1,14 @@
-import { GraphicsManager } from './engine/Graphics/GraphicsManager';
+let a = require('./webpage/animations.html');
+
 import { InputManager } from './engine/Input/InputManger';
-import { Vector2d } from './engine/Math/Vector2d';
+import { GraphicsManager, ANIMATION_STATES, Sprite, ANIMATION_TYPES, BoneTextureAnimationComponent, AngleAnimationComponent } from './engine/Graphics';
 
-import {
-    Bone,
-    Skeleton,
-    JoinPoint,
-    SkeletalStep,
-    SkeletalAnimation,
-    BoneTexture
-} from './engine/Graphics/Animations/SkeletalAnimations';
+import { ECS, EcsEntity, EcsComponent } from './engine/ECS';
+import { EventAggregator } from './engine/EventAggregator';
 
-import { Sprite } from './engine/Graphics/Sprite';
-import { AnimationManager } from './engine/Graphics/Animations/AnimationManager';
-import { Animation } from './engine/Graphics/Animations/Animation';
-import { BoneAnimation } from './engine/Graphics/Animations/SkeletalAnimations/BoneAnimation';
-
-let graphicsManager: GraphicsManager;
-let animationManager: AnimationManager;
-let skeleton: Skeleton;
-let bones: Bone[];
-
-let animationSteps: SkeletalStep[][];
-let animation: SkeletalAnimation;
-
-let attackAnimation: SkeletalAnimation;
-let walkAnimation: SkeletalAnimation;
+import { SkeletalSystem, DrawSystem, StaticAnimationSystem } from './engine/Graphics/';
+import { TextureAnimationComponent } from './engine/Graphics';
+import { Vector2d } from './engine/Math';
 
 let images: any = {};
 
@@ -33,8 +16,11 @@ function preload() {
     return new Promise((resolve, reject) => {
         let loaded = 0;
 
-        images.head = new Image();
-        images.head.src = './assets/NPC_Head_10.png';
+        images.mana = new Image();
+        images.mana.src = './assets/Mana.png';
+
+        images.npc = new Image();
+        images.npc.src = './assets/NPC_1.png';
 
         images.body = new Image();
         images.body.src = './assets/Armor_Body_1.png';
@@ -42,7 +28,14 @@ function preload() {
         images.legs = new Image();
         images.legs.src = './assets/Armor_Legs_1.png';
 
-        images.head.onload = () => {
+        images.npc.onload = () => {
+            loaded++;
+            if (loaded === Object.keys(images).length) {
+                resolve();
+            }
+        }
+
+        images.mana.onload = () => {
             loaded++;
             if (loaded === Object.keys(images).length) {
                 resolve();
@@ -65,72 +58,218 @@ function preload() {
     });
 }
 
+let eventAggregator = new EventAggregator();
+let ecs = new ECS(eventAggregator);
+let skeletalEntity: any;
+
 function init() {
-    let bodySprite = new Sprite(images.body, 40, 56, 1);
-    let legsSprite = new Sprite(images.legs, 40, 56, 1);
+    let animationSystem = new StaticAnimationSystem(eventAggregator, ['animation']);
+    let drawSystem = new DrawSystem(eventAggregator, ['draw', 'skeleton']);
+    let skeletalSystem = new SkeletalSystem(eventAggregator, ['skeleton']);
 
-    let joinPoint2 = new JoinPoint(new Vector2d(200, 215));
-    let joinPoint3 = new JoinPoint(new Vector2d(200, 230));
-    let joinPoint4 = new JoinPoint(new Vector2d(200, 245));
+    let staticDrawComponents: EcsComponent[] = [
+        new EcsComponent('draw',
+            {
+                position: new Vector2d(350, 130),
+                destWidth: 22,
+                destHeight: 25,
+                sprite: new Sprite(images.mana, 33, 24, 1),
+                staticFrame: 0
+            }
+        )
+    ]
 
-    let bodyBoneTexture = new BoneTexture(
-        bodySprite,
-        0,
-        5
+    let animatedComponents: EcsComponent[] = [
+        new EcsComponent('draw',
+            {
+                position: new Vector2d(50, 130),
+                destWidth: 40,
+                destHeight: 56,
+                sprite: new Sprite(images.npc, 33, 24, 1)
+            }
+        ),
+        new EcsComponent('animation',
+            new TextureAnimationComponent(0, 1, 20, true)
+        )
+    ];
+
+    animatedComponents[1].data.state = ANIMATION_STATES.PLAYING;
+
+    let textureLessSkeletalComponent = new EcsComponent('skeleton',
+        {
+            debug: true,
+            joinPoints: [
+                {
+                    id: 1,
+                    position: new Vector2d(500, 130),
+                    childJoinPoints: [2],
+                },
+                {
+                    id: 2,
+                    position: new Vector2d(520, 140),
+                    parentJoinPoint: 1,
+                    childJoinPoints: [3]
+                },
+                {
+                    id: 3,
+                    position: new Vector2d(540, 120),
+                    parentJoinPoint: 2,
+                    childJoinPoints: [4]
+                },
+                {
+                    id: 4,
+                    position: new Vector2d(560, 130),
+                    parentJoinPoint: 3
+                }
+            ],
+            bones: [
+                {
+                    id: 1,
+                    parentJoinPointId: 1,
+                    childJoinPointId: 2,
+                },
+                {
+                    id: 2,
+                    parentJoinPointId: 2,
+                    childJoinPointId: 3,
+                },
+                {
+                    id: 3,
+                    parentJoinPointId: 3,
+                    childJoinPointId: 4,
+                }
+            ],
+            animations: [
+                {
+                    id: 0,
+                    name: 'wave',
+                    state: ANIMATION_STATES.PLAYING,
+                    stepIndex: 0,
+                    loop: true,
+                    steps: [
+                        [ new AngleAnimationComponent(0, 360, 120, 1), new AngleAnimationComponent(0, 720, 120, 2), new AngleAnimationComponent(0, 1080, 120, 3) ],
+                        [ new AngleAnimationComponent(360, 0, 120, 1), new AngleAnimationComponent(720, 0, 120, 2), new AngleAnimationComponent(1080, 0, 120, 3) ],
+                    ]
+                }
+
+            ]
+        }
     );
 
-    let legsBoneTexture = new BoneTexture(
-        legsSprite,
-        0,
-        -10
-    )
+    textureLessSkeletalComponent.data.animations[0].steps[0][0].state = 0;
+    textureLessSkeletalComponent.data.animations[0].steps[0][1].state = 0;
+    textureLessSkeletalComponent.data.animations[0].steps[0][2].state = 0;
 
-    bones = [
-        new Bone(joinPoint3, joinPoint2, bodyBoneTexture),
-        new Bone(joinPoint4, joinPoint3, legsBoneTexture),
-    ];
+    let skeletalComponent = new EcsComponent('skeleton',
+        {
+            joinPoints: [
+                {
+                    id: 1,
+                    position: new Vector2d(200, 100),
+                    childJoinPoints: [2],
+                },
+                {
+                    id: 2,
+                    position: new Vector2d(220, 100),
+                    parentJoinPoint: 1,
+                    childJoinPoints: [3]
+                },
+                {
+                    id: 3,
+                    position: new Vector2d(240, 140),
+                    parentJoinPoint: 2
+                }
+            ],
+            bones: [
+                {
+                    id: 1,
+                    parentJoinPointId: 1,
+                    childJoinPointId: 2,
+                    texture: {
+                        sprite: new Sprite(images.legs, 40, 56, 1),
+                        offsetX: 0,
+                        offsetY: 0,
+                        currentFrame: 4
+                    }
+                },
+                {
+                    id: 2,
+                    parentJoinPointId: 2,
+                    childJoinPointId: 3,
+                    texture: {
+                        sprite: new Sprite(images.body, 40, 56, 1),
+                        offsetX: -20,
+                        offsetY: 0,
+                        currentFrame: 6
+                    }
+                }
+            ],
+            animations: [
+                {
+                    id: 0,
+                    name: 'walk',
+                    state: ANIMATION_STATES.PLAYING,
+                    stepIndex: 0,
+                    loop: true,
+                    steps: [
+                        [
+                            new BoneTextureAnimationComponent(4, 8, 10, 1),
+                            new BoneTextureAnimationComponent(4, 8, 10, 2),
+                        ],
+                    ]
+                },
+                {
+                    id: 1,
+                    name: 'attack',
+                    state: ANIMATION_STATES.PLAYING,
+                    stepIndex: 0,
+                    loop: true,
+                    steps: [
+                        [
+                            new BoneTextureAnimationComponent(0, 4, 10, 2),
+                        ]
+                    ]
+                }
+            ]
+        }
+    );
 
-    skeleton = new Skeleton(bones, new Vector2d(300, 300));
+    skeletalEntity = new EcsEntity([ skeletalComponent ]);
+    let animatedEntity = new EcsEntity(animatedComponents);
+    let drawEntity = new EcsEntity(staticDrawComponents);
+    let textureLessEntity = new EcsEntity([ textureLessSkeletalComponent ]);
 
-    let walkAnimationSteps = [
-        [ new BoneAnimation(bones[1], 8, 12, 10) ],
-        [ new BoneAnimation(bones[0], 4, 8, 10) ]
-    ];
-
-    let attackAnimationSteps = [
-        [ new BoneAnimation(bones[0], 4, 8, 10) ]
-    ];
-
-    let walkAnimation = new SkeletalAnimation(walkAnimationSteps);
-    let attackAnimation = new SkeletalAnimation(attackAnimationSteps);
-
-    skeleton.addAnimation('walk', walkAnimation);
-    skeleton.addAnimation('attack', attackAnimation);
-
-    graphicsManager = new GraphicsManager('graphics-test', 800, 800);
-
+    GraphicsManager.init('graphics-test', 800, 800);
     InputManager.init('#graphics-test');
+
+    ecs.addEntity(animatedEntity);
+    ecs.addEntity(skeletalEntity);
+    ecs.addEntity(drawEntity);
+    ecs.addEntity(textureLessEntity);
+
+    ecs.addSystem(animationSystem);
+    ecs.addSystem(drawSystem);
+    ecs.addSystem(skeletalSystem);
 
     loop();
 }
 
 function loop() {
     if (InputManager.keys[32]) {
-        skeleton.play('attack');
+        skeletalEntity.getComponent('skeleton').data.animations[1].state = ANIMATION_STATES.PLAYING;
     } else if (!InputManager.keys[32]) {
-        skeleton.stop('attack');
+        skeletalEntity.getComponent('skeleton').data.animations[1].state = ANIMATION_STATES.IDLE;
     }
 
     if (InputManager.keys[39]) {
-        skeleton.play('walk');
+        skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.PLAYING;
     } else if (!InputManager.keys[39]) {
-        skeleton.stop('walk');
+        skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.IDLE;
     }
 
-    graphicsManager.clear();
-    graphicsManager.draw();
-    skeleton.draw(graphicsManager);
-    skeleton.update();
+    GraphicsManager.clear();
+    ecs.update(0);
+    GraphicsManager.draw();
     window.requestAnimationFrame(loop);
 }
 
@@ -138,5 +277,4 @@ let i = 0;
 
 preload().then(() => {
     init();
-})
-
+});

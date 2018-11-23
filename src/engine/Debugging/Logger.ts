@@ -22,19 +22,19 @@ export const Logger: LoggerIn = {
         let consoleErrorFunction = console.error;
         let consoleInfoFunction = console.info;
 
-        console.log = function(...strings) {
+        console.log = function(...strings: any) {
             this.log(...strings);
             consoleLogFunction(...strings);
         }
-        console.warn = function(...strings) {
+        console.warn = function(...strings: any) {
             this.warn(...strings);
             consoleWarningFunction(...strings);
         }
-        console.error = function(...strings) {
+        console.error = function(...strings: any) {
             this.error(...strings);
             consoleErrorFunction(...strings);
         }
-        console.info = function(...strings) {
+        console.info = function(...strings: any) {
             this.info(...strings);
             consoleInfoFunction(...strings);
         }
