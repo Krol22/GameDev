@@ -42,13 +42,13 @@ Done:
 Todo:
 
     [ ] -> ECS 
-        [ ] -> {!} Created systems should take eventAggregator as an import,
+        [x] -> {!} Created systems should take eventAggregator as an import,
         [ ] -> {!} Component types for system should be defined in system class not when creating one,
 
     [ ] -> UIManager,
-        [ ] -> add create react app with ts,
-        [ ] -> create a showcase page,
-        [ ] -> create basic UI for game,
+        [x] -> create button for game,
+        [ ] -> add additional event on button -> hover, pressed, released,
+        [ ] -> add additional property that will filter what events should send button (not all button will send hover events);
         [ ] -> documentation,
 
     [ ] -> {!} Sprite add total number of frames,

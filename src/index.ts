@@ -1,4 +1,4 @@
-let a = require('./webpage/animations.html');
+import { UIManager } from './engine/UI/UIManager';
 
 import { InputManager } from './engine/Input/InputManger';
 import { GraphicsManager, ANIMATION_STATES, Sprite, ANIMATION_TYPES, BoneTextureAnimationComponent, AngleAnimationComponent } from './engine/Graphics';
@@ -58,14 +58,14 @@ function preload() {
     });
 }
 
-let eventAggregator = new EventAggregator();
-let ecs = new ECS(eventAggregator);
+let ecs = new ECS();
 let skeletalEntity: any;
+let ui = new UIManager();
 
 function init() {
-    let animationSystem = new StaticAnimationSystem(eventAggregator, ['animation']);
-    let drawSystem = new DrawSystem(eventAggregator, ['draw', 'skeleton']);
-    let skeletalSystem = new SkeletalSystem(eventAggregator, ['skeleton']);
+    let animationSystem = new StaticAnimationSystem(['animation']);
+    let drawSystem = new DrawSystem(['draw', 'skeleton']);
+    let skeletalSystem = new SkeletalSystem(['skeleton']);
 
     let staticDrawComponents: EcsComponent[] = [
         new EcsComponent('draw',
@@ -254,6 +254,13 @@ function init() {
     loop();
 }
 
+let a = false;
+
+EventAggregator.subscribe('button-walk-click', () => {
+    a = !a;
+    skeletalEntity.getComponent('skeleton').data.animations[0].state = a ? ANIMATION_STATES.PLAYING : ANIMATION_STATES.IDLE;
+});
+
 function loop() {
     if (InputManager.keys[32]) {
         skeletalEntity.getComponent('skeleton').data.animations[1].state = ANIMATION_STATES.PLAYING;
@@ -262,9 +269,9 @@ function loop() {
     }
 
     if (InputManager.keys[39]) {
-        skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.PLAYING;
+        // skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.PLAYING;
     } else if (!InputManager.keys[39]) {
-        skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.IDLE;
+        // skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.IDLE;
     }
 
     GraphicsManager.clear();
