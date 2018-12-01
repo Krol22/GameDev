@@ -46,9 +46,16 @@ Todo:
         [ ] -> {!} Component types for system should be defined in system class not when creating one,
 
     [ ] -> UIManager,
-        [x] -> create button for game,
-        [ ] -> add additional event on button -> hover, pressed, released,
-        [ ] -> add additional property that will filter what events should send button (not all button will send hover events);
+        [x] -> Button
+            [x] -> create button for game,
+            [x] -> add additional event on button -> hover, pressed, released,
+            [x] -> add additional property that will filter what events should send button (not all button will send hover events);
+        [ ] -> Input
+            [ ] -> create basic input component,
+            [ ] -> events buttonslike logic (events: hover, focus, blur, out, changed), 
+
+
+        [x] -> add shadow root for gameUI component
         [ ] -> documentation,
 
     [ ] -> {!} Sprite add total number of frames,
