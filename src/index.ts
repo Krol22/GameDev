@@ -10,53 +10,20 @@ import { SkeletalSystem, DrawSystem, StaticAnimationSystem } from './engine/Grap
 import { TextureAnimationComponent } from './engine/Graphics';
 import { Vector2d } from './engine/Math';
 
+import { AssetLoader, AssetManager, AssetType } from './engine/AssetsLoader';
+
 let images: any = {};
 
 function preload() {
-    return new Promise((resolve, reject) => {
-        let loaded = 0;
-
-        images.mana = new Image();
-        images.mana.src = './assets/Mana.png';
-
-        images.npc = new Image();
-        images.npc.src = './assets/NPC_1.png';
-
-        images.body = new Image();
-        images.body.src = './assets/Armor_Body_1.png';
-
-        images.legs = new Image();
-        images.legs.src = './assets/Armor_Legs_1.png';
-
-        images.npc.onload = () => {
-            loaded++;
-            if (loaded === Object.keys(images).length) {
-                resolve();
-            }
-        }
-
-        images.mana.onload = () => {
-            loaded++;
-            if (loaded === Object.keys(images).length) {
-                resolve();
-            }
-        }
-
-        images.body.onload = () => {
-            loaded++;
-            if (loaded === Object.keys(images).length) {
-                resolve();
-            }
-        }
-
-        images.legs.onload = () => {
-            loaded++;
-            if (loaded === Object.keys(images).length) {
-                resolve();
-            }
-        }
-    });
-}
+    return AssetLoader.loadAssets(
+        [
+            { name: 'mana', type: AssetType.IMAGE, src: './assets/Mana.png' },
+            { name: 'npc', type: AssetType.IMAGE, src: './assets/NPC_1.png' },
+            { name: 'body', type: AssetType.IMAGE, src:  './assets/Armor_Body_1.png' },
+            { name: 'legs', type: AssetType.IMAGE, src:  './assets/Armor_Legs_1.png' }
+        ]
+    );
+};
 
 let ecs = new ECS();
 let skeletalEntity: any;
@@ -73,7 +40,7 @@ function init() {
                 position: new Vector2d(350, 130),
                 destWidth: 22,
                 destHeight: 25,
-                sprite: new Sprite(images.mana, 33, 24, 1),
+                sprite: new Sprite(AssetManager.getAsset('mana').asset, 33, 24, 1),
                 staticFrame: 0
             }
         )
@@ -85,7 +52,7 @@ function init() {
                 position: new Vector2d(50, 130),
                 destWidth: 40,
                 destHeight: 56,
-                sprite: new Sprite(images.npc, 33, 24, 1)
+                sprite: new Sprite(AssetManager.getAsset('npc').asset, 33, 24, 1)
             }
         ),
         new EcsComponent('animation',
@@ -186,7 +153,7 @@ function init() {
                     parentJoinPointId: 1,
                     childJoinPointId: 2,
                     texture: {
-                        sprite: new Sprite(images.legs, 40, 56, 1),
+                        sprite: new Sprite(AssetManager.getAsset('legs').asset, 40, 56, 1),
                         offsetX: 0,
                         offsetY: 0,
                         currentFrame: 4
@@ -197,7 +164,7 @@ function init() {
                     parentJoinPointId: 2,
                     childJoinPointId: 3,
                     texture: {
-                        sprite: new Sprite(images.body, 40, 56, 1),
+                        sprite: new Sprite(AssetManager.getAsset('body').asset, 40, 56, 1),
                         offsetX: -20,
                         offsetY: 0,
                         currentFrame: 6
@@ -274,6 +241,7 @@ function loop() {
         // skeletalEntity.getComponent('skeleton').data.animations[0].state = ANIMATION_STATES.IDLE;
     }
 
+    InputManager.update();
     GraphicsManager.clear();
     ecs.update(0);
     GraphicsManager.draw();
