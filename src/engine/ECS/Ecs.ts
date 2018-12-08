@@ -13,7 +13,7 @@ export class ECS {
 
     private componentTypes: Array<string> = [];
 
-    constructor(private eventAggregator: EventAggregator) {
+    constructor() {
         this.componentTypes = [];
 
         this._subscribe();
@@ -78,7 +78,7 @@ export class ECS {
 
     private _addEntity(newEntity: EcsEntity) {
         this.entities.push(newEntity);
-        this.eventAggregator.publish('onCreateEntity', newEntity);
+        EventAggregator.publish('onCreateEntity', newEntity);
     }
 
     private _removeEntity(entityId: string) {
@@ -87,7 +87,7 @@ export class ECS {
         });
 
         this.entities.splice(entityIndex, 1);
-        this.eventAggregator.publish('onRemoveEntity', entityId);
+        EventAggregator.publish('onRemoveEntity', entityId);
     }
 
     private _afterSystemsUpdate () {
@@ -106,7 +106,7 @@ export class ECS {
     }
 
     private _subscribe ( ) {
-        this.eventAggregator.subscribe('onDisableSystem', (systemId: string) => {
+        EventAggregator.subscribe('onDisableSystem', (systemId: string) => {
             this._runOrPushToAfterUpdateStack(() => {
                 let systemIndex = this.systems.findIndex((system: EcsSystem) => {
                     return system.id === systemId;
@@ -117,7 +117,7 @@ export class ECS {
             });
         });
 
-        this.eventAggregator.subscribe('onEnableSystem', (systemId: string) => {
+        EventAggregator.subscribe('onEnableSystem', (systemId: string) => {
             this._runOrPushToAfterUpdateStack(() => {
                 let systemIndex = this.inactiveSystems.findIndex((system: EcsSystem) => {
                     return system.id === systemId;

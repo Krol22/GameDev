@@ -7,8 +7,7 @@ class TestSystem extends EcsSystem {
     tick() {}
 }
 
-const eventAggregator = new EventAggregator();
-const fakeSystem = new TestSystem(new EventAggregator(), []);
+const fakeSystem = new TestSystem([]);
 const fakeEntity = new EcsEntity([]);
 
 describe('ECS', () => {
@@ -18,7 +17,7 @@ describe('ECS', () => {
 
     describe('when is running', () => {
         it('should add entities or systems to ECS after the update cycle is finished', () => {
-            let testEcs = new ECS(eventAggregator);
+            let testEcs = new ECS();
 
             testEcs.update(0); // set ECS as running
 
@@ -35,7 +34,7 @@ describe('ECS', () => {
         });
 
         it('should remove entities or systems from ECS after the update cycle is finished', () => {
-            let testEcs = new ECS(eventAggregator);
+            let testEcs = new ECS();
 
             let entityId = testEcs.addEntity(fakeEntity);
             let systemId = testEcs.addSystem(fakeSystem);
@@ -60,7 +59,7 @@ describe('ECS', () => {
 
     describe('when is not running', () => {
         it('should add entities or system to ECS immediately', () => {
-            let testEcs = new ECS(eventAggregator);
+            let testEcs = new ECS();
 
             testEcs.addEntity(fakeEntity);
             testEcs.addSystem(fakeSystem);
@@ -70,7 +69,7 @@ describe('ECS', () => {
         });
 
         it('should remove entities or system from ECS immediately', () => {
-            let testEcs = new ECS(eventAggregator);
+            let testEcs = new ECS();
 
             let entityId = testEcs.addEntity(fakeEntity);
             let systemId = testEcs.addSystem(fakeSystem);
@@ -88,11 +87,11 @@ describe('ECS', () => {
 
     describe('udpate', () => {
         it('should call tick function with delta for each system', () => {
-            let testEcs = new ECS(eventAggregator);
+            let testEcs = new ECS();
             let fakeDelta = 123;
 
-            let mockSystem1 = new TestSystem(eventAggregator, []);
-            let mockSystem2 = new TestSystem(eventAggregator, []);
+            let mockSystem1 = new TestSystem([]);
+            let mockSystem2 = new TestSystem([]);
 
             spyOn(mockSystem1, 'tick');
             spyOn(mockSystem2, 'tick');
@@ -112,14 +111,14 @@ describe('ECS', () => {
 
         beforeEach(() => {
             callbacks = {};
-            spyOn(eventAggregator, 'subscribe').and.callFake((eventName: string, callback: Function) => {
+            spyOn(EventAggregator, 'subscribe').and.callFake((eventName: string, callback: Function) => {
                 callbacks[eventName] = callback;
             });
         });
 
         it('should remove system from active and push to inactiveSystems on onDisableSystem event', () => {
-            const testEcs = new ECS(eventAggregator);
-            const mockSystem1 = new TestSystem(eventAggregator, []);
+            const testEcs = new ECS();
+            const mockSystem1 = new TestSystem([]);
             const mockSystemId = testEcs.addSystem(mockSystem1);
 
             expect(testEcs.__getSystems()).toContain(mockSystem1);
@@ -131,9 +130,8 @@ describe('ECS', () => {
         });
 
         it('should system from inactiveSystems and push to systems on onEnableSystem event', () => {
-            const eventName = 'onEnableSystem';
-            const testEcs = new ECS(eventAggregator);
-            const mockSystem1 = new TestSystem(eventAggregator, []);
+            const testEcs = new ECS();
+            const mockSystem1 = new TestSystem([]);
             const mockSystemId = testEcs.addSystem(mockSystem1);
 
             callbacks['onDisableSystem'](mockSystemId);
