@@ -6,14 +6,13 @@ describe('EventAggregator', () => {
     });
 
     it('should subscribe for an event and call callback on publish', () => {
-        const eventAggregator = new EventAggregator();
         const testingEvent = 'TestingEvent';
         const fakeArg = 1
 
         const spyobj = jasmine.createSpyObj('spyobj', ['fakeMethod']);
 
-        eventAggregator.subscribe(testingEvent, spyobj.fakeMethod);
-        eventAggregator.publish(testingEvent, fakeArg);
+        EventAggregator.subscribe(testingEvent, spyobj.fakeMethod);
+        EventAggregator.publish(testingEvent, fakeArg);
 
         expect(spyobj.fakeMethod).toHaveBeenCalledWith(fakeArg);
     });

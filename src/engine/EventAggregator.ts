@@ -1,10 +1,5 @@
-export class EventAggregator {
-    private topics: Object;
-
-    constructor() {
-        this.topics = { };
-    }
-
+export const EventAggregator = {
+    topics: {},
     publish(eventName: string, ...args: any) {
         if (!this.topics[eventName]) {
             return;
@@ -13,8 +8,7 @@ export class EventAggregator {
         this.topics[eventName].forEach((callback: Function) => {
             callback(...args);
         });
-    }
-
+    },
     subscribe(eventName: string, callback: Function) {
         if (!this.topics[eventName]) {
             this.topics[eventName] = [];
@@ -23,3 +17,10 @@ export class EventAggregator {
         this.topics[eventName].push(callback);
     }
 }
+
+export interface IEventAggregator {
+    topics: Object,
+    publish: Function,
+    subscribe: Function
+};
+

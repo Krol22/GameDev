@@ -15,7 +15,6 @@ export abstract class EcsSystem {
     abstract tick(delta: number): void;
 
     constructor(
-        private eventAggregator: EventAggregator,
         private componentTypes: Array<string>
         ) {
 
@@ -28,7 +27,7 @@ export abstract class EcsSystem {
 
     setIsActive(active: boolean): void {
         this.isActive = active;
-        this.eventAggregator.publish(active ? 'onEnableSystem' : 'onDisableSystem', this.id);
+        EventAggregator.publish(active ? 'onEnableSystem' : 'onDisableSystem', this.id);
     }
 
     getisActive(): boolean {
@@ -59,13 +58,13 @@ export abstract class EcsSystem {
     }
 
     private _subscribe(): void {
-        this.eventAggregator.subscribe('onCreateEntity', (entity: EcsEntity) => {
+        EventAggregator.subscribe('onCreateEntity', (entity: EcsEntity) => {
             if (this._isEntityForSystem(entity)) {
                 this.systemEntities.push(entity);
             }
         });
 
-        this.eventAggregator.subscribe('onRemoveEntity', (entityId: string) => {
+        EventAggregator.subscribe('onRemoveEntity', (entityId: string) => {
             let entityIndex = this.systemEntities.findIndex((entity: EcsEntity) => {
                 return entity.id === entityId;
             });

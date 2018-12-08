@@ -29,17 +29,15 @@ describe('EcsSystem', () => {
     });
 
     describe('Instance', () => {
-        let eventAggregator: EventAggregator = new EventAggregator();
         let testInstance: TestSystem;
 
         beforeAll(() => {
-            eventAggregator = new EventAggregator();
-            spyOn(eventAggregator, 'publish');
+            spyOn(EventAggregator, 'publish');
         });
 
         describe('setEntities', () => {
             it('should get only entities that components are type test and test_type', () => {
-                testInstance = new TestSystem(eventAggregator, ['test', 'test_type']);
+                testInstance = new TestSystem(['test', 'test_type']);
                 testInstance.setEntities(fakeEntities);
 
                 expect(testInstance.__getSystemEntities()).toContain(fakeEntitiy1);
@@ -48,17 +46,17 @@ describe('EcsSystem', () => {
 
         describe('setActive', () => {
             it('should publish onEnableSystem event when isActive is changed to true', () => {
-                testInstance = new TestSystem(eventAggregator, []);
+                testInstance = new TestSystem([]);
                 testInstance.setIsActive(true);
 
-                expect(eventAggregator.publish).toHaveBeenCalledWith('onEnableSystem', jasmine.any(String));
+                expect(EventAggregator.publish).toHaveBeenCalledWith('onEnableSystem', jasmine.any(String));
             });
 
             it('should publish onDisableSystem event when isActive is changed to false', () => {
-                testInstance = new TestSystem(eventAggregator, []);
+                testInstance = new TestSystem([]);
                 testInstance.setIsActive(false);
 
-                expect(eventAggregator.publish).toHaveBeenCalledWith('onDisableSystem', jasmine.any(String));
+                expect(EventAggregator.publish).toHaveBeenCalledWith('onDisableSystem', jasmine.any(String));
             });
         });
 
@@ -67,14 +65,14 @@ describe('EcsSystem', () => {
 
             beforeEach(() => {
                 eventCallbacks = {};
-                spyOn(eventAggregator, 'subscribe').and.callFake((eventName: string, eventCallback: Function) => {
+                spyOn(EventAggregator, 'subscribe').and.callFake((eventName: string, eventCallback: Function) => {
                     eventCallbacks[eventName] = eventCallback;
                 });
             });
 
             it('should push entity if is valid on onCreateEntity event', () => {
                 let eventName = 'onCreateEntity';
-                testInstance = new TestSystem(eventAggregator, ['test']);
+                testInstance = new TestSystem(['test']);
 
                 eventCallbacks[eventName](fakeEntitiy4);
                 eventCallbacks[eventName](fakeEntitiy3);
@@ -84,8 +82,7 @@ describe('EcsSystem', () => {
             });
 
             it('should remove entity from systemEntities on onRemoveEntity event', () => {
-                let eventName = 'onRemoveEntity';
-                testInstance = new TestSystem(eventAggregator, ['test', 'test_type']);
+                testInstance = new TestSystem(['test', 'test_type']);
 
                 eventCallbacks['onCreateEntity'](fakeEntitiy1);
                 expect(testInstance.__getSystemEntities()).toContain(fakeEntitiy1);
